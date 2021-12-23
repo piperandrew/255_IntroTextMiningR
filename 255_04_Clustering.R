@@ -1,0 +1,206 @@
+######### LLCU 255 Introduction to Literary Text Mining ##########
+######### by Andrew Piper ####################
+######### CC By 4.0 License ##################
+
+#this week we will learn how to create a vector space model to model semantic
+#relationships between documents (i.e. their similarity in terms of their style or content)
+#in part 2 we will learn how to cluster documents based on these relationships
+#clustering can be a useful way of understanding relationships between documents
+
+library("tm")
+library("proxy")
+setwd("~/Data")
+
+#make your DTM
+corpus1 <- VCorpus(DirSource("txtlab_Novel150_English", encoding = "UTF-8"), readerControl=list(language="English"))
+corpus1 <- tm_map(corpus1, content_transformer(tolower))
+corpus1 <- tm_map(corpus1, content_transformer(removeNumbers))
+f<-content_transformer(function(x, pattern) gsub(pattern, " ", x))
+corpus1 <- tm_map(corpus1, f, "[[:punct:]]")
+corpus1 <- tm_map(corpus1, content_transformer(stripWhitespace)) 
+corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf)))
+dtm.scaled<-corpus1.dtm/row_sums(corpus1.dtm)
+dtm.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
+
+### create the following tables #####
+
+#ONLY STOPWORDS
+stop<-stopwords("en")
+stop<-unlist(strsplit(stop,"[[:punct:]]"))
+stop<-unique(stop)
+#add extra stopwords
+stop<-append(stop, c("said", "one", "will"))
+stop<-append(stop, tolower(as.roman(1:1000)))
+dtm.stop<-as.matrix(dtm.scaled[ ,which(colnames(dtm.scaled) %in% stop)])
+
+#NO STOPWORDS + NON-SPARSE WORDS
+dtm.nostop<-dtm.scaled[ ,which(!colnames(dtm.scaled) %in% stop)]
+dtm.sparse<-removeSparseTerms(dtm.nostop, 0.4)
+
+#TFIFDF VERSION NO STOP, NONSPARSE
+dtm.tfidf<-weightTfIdf(dtm.sparse, normalize = TRUE)
+
+####### Part 1: Build a Similarity Matrix #######
+#in this section we will build a similarity matrix between documents given our feature space
+
+
+#if you wish to see a list of all similarity measures
+summary(pr_DB)
+
+#generate a similarity matrix using one of the tables from above
+sim.m<-as.matrix(simil(corpus1.scaled, method = "cosine")) #change cosine to correlation or Jaccard or any other measure
+
+#examine a single document
+row.names(sim.m)
+sort(sim.m[which(row.names(sim.m) == "NOVEL_1813_Austen,Jane_PrideandPrejudice_Novel.txt"),], decreasing=F)[1:10]
+
+#plot these relationships
+target<-sort(sim.m[which(row.names(sim.m) == "NOVEL_1813_Austen,Jane_PrideandPrejudice_Novel.txt"),], decreasing=T)
+plot(target, main="Similarity of Novels to Pride and Prejudice")
+
+### Part 2: Clustering ####
+library("tm")
+library("SnowballC")
+library("proxy")
+library("cluster")
+library("dendextend")
+library("splitstackshape")
+#set your working directory
+setwd("~/Documents/6. Teaching/255 Intro to Text Mining/255 - Data")
+
+#read in corpus1
+corpus1 <- VCorpus(DirSource("NovelEnglishGenderSample", encoding = "UTF-8"), readerControl=list(language="English"))
+
+#clean your data
+corpus1 <- tm_map(corpus1, content_transformer(stripWhitespace))
+corpus1 <- tm_map(corpus1, content_transformer(tolower))
+corpus1 <- tm_map(corpus1, content_transformer(removeNumbers))
+corpus1 <- tm_map(corpus1, removeWords, stopwords("English"))
+corpus1 <- tm_map(corpus1, content_transformer(removePunctuation))
+#corpus1 <- tm_map(corpus1, stemDocument, language = "english")
+
+#create your document term matrix
+corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf)))
+corpus1.matrix<-as.matrix(corpus1.dtm, stringsAsFactors=F)
+
+#perform transformations on the raw counts
+
+#Method 0: Remove sparse terms
+corpus1.dtm.sparse<-removeSparseTerms(corpus1.dtm, 0.4) #lower number = requiring that a word be in more documents
+corpus1.matrix.sparse<-as.matrix(corpus1.dtm.sparse, stringsAsFactors=F)
+
+#Method 1: Scaling
+scaling1<-rowSums(corpus1.matrix) #get total word counts for each work
+corpus1.scaled<-corpus1.matrix.sparse/scaling1 #turn counts into percentages 
+
+#Method 2: tfidf
+corpus1.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
+corpus1.tfidf.matrix<-as.matrix(corpus1.tfidf, stringsAsFactors=F)
+
+#use a vector space model to understand the similarity of your documents
+summary(pr_DB) #input this to see list of similarity measures
+
+#you can either use corpus1.scaled or corpus1.tfidf.matrix
+sim.m<-simil(corpus1.scaled, method = "cosine") #change cosine to correlation or Jaccard or any other measure
+
+#transfer to a distance matrix
+dist.m<-pr_simil2dist(sim.m)
+#dist.m<-dist(corpus1.scaled, method = "Euclidean") #change cosine to correlation or Jaccard or any other measure
+
+
+#you can inspect your sim.m and dist.m to see how they are inverse of each other (dist = 1-sim)
+#in other words the first value of both should add to one, as should the second value, etc.
+head(sim.m)
+head(dist.m)
+
+#cluster your documents using hierarchical clustering
+fit<-hclust(dist.m, method = "ward.D2") #other options for "ward.D2" = "complete", "single", or "centroid" (there are more...)
+
+#predict the optimal number of clusters
+dend_k<-find_k(fit, krange = 2:(nrow(dist.m)-1))
+
+### plot ###
+
+#first turn into a dendrogram object
+dend<-as.dendrogram(fit)
+
+#second color your branches by the predicted number of clusters
+dend <- color_branches(dend, k = dend_k$nc)
+
+#third create a data frame that has your category labels from your filenames
+#this splits on underscores, so in this example it takes the male/female labels from your filenames
+#you can use other labels for this purpose from your sample data
+label.df<-data.frame(labels(dend))
+label.df<-cSplit(label.df, 'labels.dend.', sep="_", type.convert=FALSE)
+label.df$filenames<-labels(dend)
+
+#this defines as many colors as you have clusters
+colors_to_use <- as.numeric(as.factor(label.df$labels.dend._1))
+
+#this colors your labels according to your categories (i.e. male/female)
+labels_colors(dend) <- colors_to_use+1
+
+#set the text to be small
+par(cex=0.2)
+
+#plot
+plot(dend, horiz=TRUE)
+
+#clear all your graphing parameters
+dev.off()
+
+### Calculate Purity of Clusters ###
+#calculate how well sorted your clusters are by categories (male/female)
+#the measure you will use is called a purity score
+
+#first create a data frame that lists the clusters
+cluster.df<-data.frame(dend_k$pamobject$clustering)
+cluster.df$filenames<-row.names(cluster.df)
+
+#second merge this table with your previous table above that has the category labels
+purity.df<-merge(cluster.df, label.df, by="filenames")
+
+#now run a loop that goes through each cluster and calculates a purity score for that cluster
+#purity = the percentage of items that belong to the single largest category for that cluster
+final.df<-NULL
+for (i in 1:nlevels(as.factor(purity.df$dend_k.pamobject.clustering))){
+  #first subset your data frame by each cluster
+  sub<-purity.df[purity.df$dend_k.pamobject.clustering == i,]
+  #calculate how many items are in a cluster
+  items<-nrow(sub)
+  #calculate the number of items for each category
+  cat1<-length(which(sub$labels.dend._1 == levels(as.factor(sub$labels.dend._1))[1]))
+  cat2<-length(which(sub$labels.dend._1 == levels(as.factor(sub$labels.dend._1))[2]))
+  #calculate the purity score
+  #it takes the group with the most items and divides by the total number of items
+  purity.score<-max(cat1, cat2)/(cat1+cat2)
+  if (cat1 > cat2) {
+    cat.name<-levels(as.factor(sub$labels.dend._1))[1]
+  } else {
+    cat.name<-levels(as.factor(sub$labels.dend._1))[2]
+  }
+  temp.df<-data.frame(i, items, purity.score, cat.name)
+  final.df<-rbind(final.df, temp.df)
+}
+
+#inspect how many texts you have per category to make sure they are balanced
+#if you have more texts in one group it is more likely that they will dominate your clusters
+table(purity.df$labels.dend._1)
+
+
+#### What are the most similar documents using these feature spaces? ####
+
+#first transform your document term matrix into a 'distance matrix'
+library(proxy)
+#make document similarity matrix using "cosine similarity"
+sim.d<-as.matrix(simil(as.matrix(dtm.sparse), method = "cosine"))
+#find most similar items to target text
+row.names(sim.d)
+sort(sim.d[row.names(sim.d) == "EN_1813_Austen,Jane_PrideandPrejudice_Novel.txt",], decreasing = F)
+
+#make term similarity matrix using "cosine similarity"
+sim.t<-as.matrix(simil(t(as.matrix(dtm.sparse)), method = "cosine"))
+#find most similar items to target word
+sort(sim.t[which(row.names(sim.t) == "heart"),], decreasing = T)[1:100]
+
+

@@ -76,8 +76,6 @@ stop<-unique(stop)
 
 #keep only stopwords in your DTM
 dtm.stop<-as.matrix(dtm.scaled[ ,which(colnames(dtm.scaled) %in% stop)])
-dtm.stop.tfidf<-as.matrix(dtm.tfidf[ ,which(colnames(dtm.tfidf) %in% stop)])
-
 
 ########## REMOVING STOPWORDS #############
 
