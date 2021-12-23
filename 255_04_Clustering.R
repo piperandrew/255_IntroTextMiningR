@@ -11,8 +11,11 @@ library("tm")
 library("proxy")
 setwd("~/Data")
 
+#Dataset for this example:
+#NovelEnglishGenderSample. https://doi.org/10.6084/m9.figshare.17433266.v1 
+
 #make your DTM
-corpus1 <- VCorpus(DirSource("txtlab_Novel150_English", encoding = "UTF-8"), readerControl=list(language="English"))
+corpus1 <- VCorpus(DirSource("NovelEnglishGenderSample", encoding = "UTF-8"), readerControl=list(language="English"))
 corpus1 <- tm_map(corpus1, content_transformer(tolower))
 corpus1 <- tm_map(corpus1, content_transformer(removeNumbers))
 f<-content_transformer(function(x, pattern) gsub(pattern, " ", x))
@@ -43,12 +46,13 @@ dtm.tfidf<-weightTfIdf(dtm.sparse, normalize = TRUE)
 ####### Part 1: Build a Similarity Matrix #######
 #in this section we will build a similarity matrix between documents given our feature space
 
-
 #if you wish to see a list of all similarity measures
+#we will be using "cosine" similarity as our default
 summary(pr_DB)
 
-#generate a similarity matrix using one of the tables from above
-sim.m<-as.matrix(simil(corpus1.scaled, method = "cosine")) #change cosine to correlation or Jaccard or any other measure
+#generate a similarity matrix using one of the DTMs
+#method = "cosine" -- you can change "cosine" to any other method
+sim.m<-as.matrix(simil(as.matrix(dtm.sparse), method = "cosine"))
 
 #examine a single document
 row.names(sim.m)
