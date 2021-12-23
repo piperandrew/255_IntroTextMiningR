@@ -9,6 +9,10 @@
 #install.packages("tm")
 #install.packages("slam")
 
+#Dataset used here:
+#txtlab_Novel150_English 
+#https://doi.org/10.6084/m9.figshare.17425562.v1 
+
 #load libraries (you need to do this every time)
 library("tm")
 library("slam")
