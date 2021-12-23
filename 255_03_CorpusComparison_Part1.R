@@ -2,6 +2,9 @@
 ######### by Andrew Piper ####################
 ######### CC By 4.0 License ##################
 
+### Datasets used here:
+#Sherlock Holmes Collection. https://doi.org/10.6084/m9.figshare.17425568.v1 
+#Short Stories Collection. https://doi.org/10.6084/m9.figshare.17425571.v1 
 
 #############   CORPUS COMPARISON     ##################
 #In this script we will learn how to ingest two separate corpora and compare them
