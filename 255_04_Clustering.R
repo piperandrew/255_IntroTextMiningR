@@ -36,11 +36,14 @@ stop<-append(stop, c("said", "one", "will"))
 stop<-append(stop, tolower(as.roman(1:1000)))
 dtm.stop<-as.matrix(dtm.scaled[ ,which(colnames(dtm.scaled) %in% stop)])
 
+#STOPWORDS + NON-SPARSE WORDS
+dtm.sparse.stop<-removeSparseTerms(dtm.scaled, 0.4)
+
 #NO STOPWORDS + NON-SPARSE WORDS
 dtm.nostop<-dtm.scaled[ ,which(!colnames(dtm.scaled) %in% stop)]
 dtm.sparse<-removeSparseTerms(dtm.nostop, 0.4)
 
-#TFIFDF VERSION NO STOP, NONSPARSE
+#TFIFDF VERSION NO-STOP, NON-SPARSE
 dtm.tfidf<-weightTfIdf(dtm.sparse, normalize = TRUE)
 
 ####### Part 1: Build a Similarity Matrix #######
@@ -56,66 +59,29 @@ sim.m<-as.matrix(simil(as.matrix(dtm.sparse), method = "cosine"))
 
 #examine a single document
 row.names(sim.m)
-sort(sim.m[which(row.names(sim.m) == "NOVEL_1813_Austen,Jane_PrideandPrejudice_Novel.txt"),], decreasing=F)[1:10]
+sort(sim.m[which(row.names(sim.m) == "Female_1813_Austen,Jane_PrideandPrejudice_Novel.txt"),], decreasing=T)[1:10]
 
 #plot these relationships
-target<-sort(sim.m[which(row.names(sim.m) == "NOVEL_1813_Austen,Jane_PrideandPrejudice_Novel.txt"),], decreasing=T)
-plot(target, main="Similarity of Novels to Pride and Prejudice")
+target<-sort(sim.m[which(row.names(sim.m) == "Female_1813_Austen,Jane_PrideandPrejudice_Novel.txt"),], decreasing=T)
+plot(target, main="Similarity of Novels to Pride and Prejudice", ylab="Cosine Similarity")
 
-### Part 2: Clustering ####
-library("tm")
-library("SnowballC")
-library("proxy")
+###########  Part 2: Clustering   ##########
 library("cluster")
 library("dendextend")
 library("splitstackshape")
-#set your working directory
-setwd("~/Documents/6. Teaching/255 Intro to Text Mining/255 - Data")
 
-#read in corpus1
-corpus1 <- VCorpus(DirSource("NovelEnglishGenderSample", encoding = "UTF-8"), readerControl=list(language="English"))
+####  This takes your DTMs above as input  ######
+#dtm.stop
+#dtm.sparse.stop
+#dtm.sparse
+#dtm.tfidf
 
-#clean your data
-corpus1 <- tm_map(corpus1, content_transformer(stripWhitespace))
-corpus1 <- tm_map(corpus1, content_transformer(tolower))
-corpus1 <- tm_map(corpus1, content_transformer(removeNumbers))
-corpus1 <- tm_map(corpus1, removeWords, stopwords("English"))
-corpus1 <- tm_map(corpus1, content_transformer(removePunctuation))
-#corpus1 <- tm_map(corpus1, stemDocument, language = "english")
-
-#create your document term matrix
-corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf)))
-corpus1.matrix<-as.matrix(corpus1.dtm, stringsAsFactors=F)
-
-#perform transformations on the raw counts
-
-#Method 0: Remove sparse terms
-corpus1.dtm.sparse<-removeSparseTerms(corpus1.dtm, 0.4) #lower number = requiring that a word be in more documents
-corpus1.matrix.sparse<-as.matrix(corpus1.dtm.sparse, stringsAsFactors=F)
-
-#Method 1: Scaling
-scaling1<-rowSums(corpus1.matrix) #get total word counts for each work
-corpus1.scaled<-corpus1.matrix.sparse/scaling1 #turn counts into percentages 
-
-#Method 2: tfidf
-corpus1.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
-corpus1.tfidf.matrix<-as.matrix(corpus1.tfidf, stringsAsFactors=F)
-
-#use a vector space model to understand the similarity of your documents
-summary(pr_DB) #input this to see list of similarity measures
-
-#you can either use corpus1.scaled or corpus1.tfidf.matrix
-sim.m<-simil(corpus1.scaled, method = "cosine") #change cosine to correlation or Jaccard or any other measure
+#make a similarity matrix
+#compare sparse and stop
+sim.m<-simil(as.matrix(dtm.stop), method = "cosine") #change cosine to correlation or Jaccard or any other measure
 
 #transfer to a distance matrix
 dist.m<-pr_simil2dist(sim.m)
-#dist.m<-dist(corpus1.scaled, method = "Euclidean") #change cosine to correlation or Jaccard or any other measure
-
-
-#you can inspect your sim.m and dist.m to see how they are inverse of each other (dist = 1-sim)
-#in other words the first value of both should add to one, as should the second value, etc.
-head(sim.m)
-head(dist.m)
 
 #cluster your documents using hierarchical clustering
 fit<-hclust(dist.m, method = "ward.D2") #other options for "ward.D2" = "complete", "single", or "centroid" (there are more...)
@@ -123,15 +89,15 @@ fit<-hclust(dist.m, method = "ward.D2") #other options for "ward.D2" = "complete
 #predict the optimal number of clusters
 dend_k<-find_k(fit, krange = 2:(nrow(dist.m)-1))
 
-### plot ###
+###### PLOT #########
 
-#first turn into a dendrogram object
+#turn into a dendrogram object
 dend<-as.dendrogram(fit)
 
 #second color your branches by the predicted number of clusters
 dend <- color_branches(dend, k = dend_k$nc)
 
-#third create a data frame that has your category labels from your filenames
+#create a data frame that has your category labels from your filenames
 #this splits on underscores, so in this example it takes the male/female labels from your filenames
 #you can use other labels for this purpose from your sample data
 label.df<-data.frame(labels(dend))
@@ -153,7 +119,7 @@ plot(dend, horiz=TRUE)
 #clear all your graphing parameters
 dev.off()
 
-### Calculate Purity of Clusters ###
+#######  Calculate Purity of Clusters   #########
 #calculate how well sorted your clusters are by categories (male/female)
 #the measure you will use is called a purity score
 
