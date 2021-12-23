@@ -141,38 +141,10 @@ dtm.sparse<-removeSparseTerms(dtm.nostop, 0.4)
 sort(col_means(dtm.sparse), decreasing = T)[1:5]
 sort(col_means(dtm.sparse), decreasing = T)[(length(colnames(dtm.sparse))-4):length(colnames(dtm.sparse))]
 
+#if you want to visualize this as a table
+dtm<-as.matrix(dtm.sparse)
+
 #you're good to go!
-
-#subset your tfidf table by these words
-dtm.sparse.tfidf<-dtm.tfidf[,colnames(dtm.tfidf) %in% colnames(dtm.sparse)]
-#view
-dtm.sparse.tfidf.m<-as.matrix(dtm.sparse.tfidf)
-sort(col_means(dtm.sparse.tfidf), decreasing = T)[1:5]
-sort(col_means(dtm.sparse.tfidf), decreasing = T)[(length(colnames(dtm.sparse.tfidf))-4):length(colnames(dtm.sparse.tfidf))]
-
-#Plot the sparse words' frequencies
-top.sparse<-sort(col_means(dtm.sparse), decreasing = T)
-options(scipen = 999)
-plot(top.sparse[1:1000], xlab="words", ylab="frequency")
-text(1:3, unname(top.sparse[1:3]), labels=c(names(top.sparse[1:3])), cex=.7, pos=4)
-top.sparse[1:200]
-
-
-#### What are the most similar documents using these feature spaces? ####
-
-#first transform your document term matrix into a 'distance matrix'
-library(proxy)
-#make document similarity matrix using "cosine similarity"
-sim.d<-as.matrix(simil(as.matrix(dtm.sparse), method = "cosine"))
-#find most similar items to target text
-row.names(sim.d)
-sort(sim.d[row.names(sim.d) == "EN_1813_Austen,Jane_PrideandPrejudice_Novel.txt",], decreasing = F)
-
-#make term similarity matrix using "cosine similarity"
-sim.t<-as.matrix(simil(t(as.matrix(dtm.sparse)), method = "cosine"))
-#find most similar items to target word
-sort(sim.t[which(row.names(sim.t) == "heart"),], decreasing = T)[1:100]
-
 
 
 
