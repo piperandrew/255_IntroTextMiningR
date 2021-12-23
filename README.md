@@ -1,6 +1,9 @@
 # 255_IntroTextMiningR
 Code for my course "Introduction to Literary Text Mining"
 
+I recommend you take the following 3-5 hour free online course to familiarize yourself with R:
+https://www.udemy.com/course/r-basics/
+
 All data referenced in the code can be found here:
 
 txtlab_Novel150_English. https://doi.org/10.6084/m9.figshare.17425562.v1 
