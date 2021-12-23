@@ -51,7 +51,7 @@ word2vec_similarity(emb1["human", ], emb1["nature", ], top_n = 1)
 word2vec_similarity(emb2["human", ], emb2["nature", ], top_n = 1)
 
 #create artificial vectors by adding or subtracting word vectors
-vector <- emb1["human", ] - emb1["animal", ]
+vector <- emb1["king", ] - emb1["man", ] + emb1["woman", ]
 predict(model1, vector, type = "nearest", top_n = 10)
 
 
@@ -77,7 +77,7 @@ model<-read.vectors("glove.6B.50d.txt")
 #find nearst words
 nearest_to(model, model[[c("frog")]], 10)
 nearest_to(model, model[[c("frog", "frogs")]], 10)
-nearest_to(model,model[["girl"]]-model[["boy"]])
+nearest_to(model, model[["king"]]-model[["man"]]+model[["woman"]], 10)
 cosineSimilarity(model[["rock"]], model[["boulder"]])
 cosineSimilarity(model[[c("rock", "rocks")]], model[["lamp"]])
 
