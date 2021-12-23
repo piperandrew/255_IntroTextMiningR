@@ -46,6 +46,8 @@ dtm.sparse<-removeSparseTerms(dtm.nostop, 0.4)
 #TFIFDF VERSION NO-STOP, NON-SPARSE
 dtm.tfidf<-weightTfIdf(dtm.sparse, normalize = TRUE)
 
+
+
 ####### Part 1: Build a Similarity Matrix #######
 #in this section we will build a similarity matrix between documents given our feature space
 
@@ -69,6 +71,7 @@ plot(target, main="Similarity of Novels to Pride and Prejudice", ylab="Cosine Si
 library("cluster")
 library("dendextend")
 library("splitstackshape")
+summary(pr_DB)
 
 ####  This takes your DTMs above as input  ######
 #dtm.stop
