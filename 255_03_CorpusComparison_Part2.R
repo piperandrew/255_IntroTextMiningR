@@ -2,7 +2,7 @@
 ######### CC By 4.0 License ##################
 
 
-#############   CORPUS COMPARISON     ##################
+#############   CORPUS COMPARISON      ##################
 #In this script we will learn how to ingest two separate corpora and compare them
 
 #Part 1. We will first compare them by examining individual features of interest.
