@@ -156,21 +156,3 @@ for (i in 1:nlevels(as.factor(purity.df$dend_k.pamobject.clustering))){
 #inspect how many texts you have per category to make sure they are balanced
 #if you have more texts in one group it is more likely that they will dominate your clusters
 table(purity.df$labels.dend._1)
-
-
-#### What are the most similar documents using these feature spaces? ####
-
-#first transform your document term matrix into a 'distance matrix'
-library(proxy)
-#make document similarity matrix using "cosine similarity"
-sim.d<-as.matrix(simil(as.matrix(dtm.sparse), method = "cosine"))
-#find most similar items to target text
-row.names(sim.d)
-sort(sim.d[row.names(sim.d) == "EN_1813_Austen,Jane_PrideandPrejudice_Novel.txt",], decreasing = F)
-
-#make term similarity matrix using "cosine similarity"
-sim.t<-as.matrix(simil(t(as.matrix(dtm.sparse)), method = "cosine"))
-#find most similar items to target word
-sort(sim.t[which(row.names(sim.t) == "heart"),], decreasing = T)[1:100]
-
-
