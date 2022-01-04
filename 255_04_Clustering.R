@@ -2,6 +2,8 @@
 ######### by Andrew Piper ####################
 ######### CC By 4.0 License ##################
 
+################# Clustering ###########################
+
 #this week we will learn how to create a vector space model to model semantic
 #relationships between documents (i.e. their similarity in terms of their style or content)
 #in part 2 we will learn how to cluster documents based on these relationships
