@@ -7,8 +7,8 @@
 library("kernlab")
 library("caret")
 library("tm")
-library(slam)
-library(splitstackshape)
+library("slam")
+library("splitstackshape")
 
 #Dataset 1:
 #txtlab_Novel150_English. https://doi.org/10.6084/m9.figshare.17425562.v1 
@@ -35,13 +35,13 @@ dtm.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
 stop<-stopwords("en")
 stop<-unlist(strsplit(stop,"[[:punct:]]"))
 stop<-unique(stop)
-#add extra stopwords (specific to novels)
-stop<-append(stop, c("said", "one", "will"))
-stop<-append(stop, tolower(as.roman(1:1000)))
 dtm.stop<-as.matrix(dtm.scaled[ ,which(colnames(dtm.scaled) %in% stop)])
 
 #DTM W NO STOPWORDS + NON-SPARSE WORDS
-dtm.nostop<-dtm.scaled[ ,which(!colnames(dtm.scaled) %in% stop)]
+#add extra stopwords (specific to novels)
+stop.plus<-append(stop, c("said", "one", "will"))
+stop.plus<-append(stop.plus, tolower(as.roman(1:1000)))
+dtm.nostop<-dtm.scaled[ ,which(!colnames(dtm.scaled) %in% stop.plus)]
 dtm.sparse<-removeSparseTerms(dtm.nostop, 0.4)
 
 #DTM W TFIFDF VERSION NO STOP, NONSPARSE
@@ -52,9 +52,11 @@ dtm.tfidf<-weightTfIdf(dtm.sparse, normalize = TRUE)
 #This involves creating a column called "corpus" which contains the "class" to which each document belongs
 
 #first turn DTM into a data frame
+#default = dtm.sparse -- you can change this!
 dtm<-as.data.frame(as.matrix(dtm.sparse))
 
 ### Method 1 = Extract class from metadata
+#use this for txtlab_Novel150_English dataset
 #load metadata
 meta<-read.csv("txtlab_Novel150_English.csv")
 #order metadata and DTM by filenames
