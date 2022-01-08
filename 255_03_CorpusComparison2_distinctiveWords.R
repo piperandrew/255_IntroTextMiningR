@@ -4,19 +4,6 @@
 
 
 #############   CORPUS COMPARISON      ##################
-#In this script we will learn how to ingest two separate corpora and compare them
-
-#Part 1. We will first compare them by examining individual features of interest.
-#Can we say that Feature X occurs significantly more frequently in Corpus A compared to Corpus B?
-
-#Part2. We will then learn methods for testing *every* feature of interest (usually words)
-#And ranking words by their "distinctiveness" -- how much more frequent is Feature X in Corpus A than Corpus B?
-#Rather than condition on one feature, we will look at all available features
-#Keep in mind this is akin to running multiple hypothesis tests so we need to do some sort of
-#correction because we will inevitably find some variables that differ accidentally
-#(if you run enough tests one of them will accidentally return a positive result)
-#for more reading see:
-#https://en.wikipedia.org/wiki/Bonferroni_correction
 
 library("tm")
 library("slam")
@@ -51,8 +38,8 @@ corpus2.dtm<-DocumentTermMatrix(corpus2, control=list(wordLengths=c(1,Inf))) #(1
 dtm2.scaled<-corpus2.dtm/row_sums(corpus2.dtm)
 
 ############   DISTINCTIVE FEATURES - ALL   ##############
-#Here we will do something similar for ALL features in our data
-#For our purposes here we are going to use what is called a log-likelihood test (called G-squared or "Dunning's" test)
+#Here we are going to discover "distinctive features" of each of our corpora
+#For our purposes we are going to use what is called a log-likelihood test (called G-squared or "Dunning's" test)
 
 #The way we will model this is to ask how much more likely is WORD X to appear in CORPUS A than B
 #The way calculate this is by making what are known as "contingency tables".
