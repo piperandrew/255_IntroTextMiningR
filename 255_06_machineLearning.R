@@ -8,7 +8,6 @@ library("kernlab")
 library("caret")
 library("tm")
 library("slam")
-library("splitstackshape")
 
 #Dataset 1:
 #txtlab_Novel150_English. https://doi.org/10.6084/m9.figshare.17425562.v1 
