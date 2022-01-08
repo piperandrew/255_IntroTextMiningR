@@ -7,8 +7,8 @@
 #it reuses the "Corpus Comparison - Part 1" scripts
 
 ### Datasets used here:
-#Sherlock Holmes Collection. https://doi.org/10.6084/m9.figshare.17425568.v1 
-#Short Stories Collection. https://doi.org/10.6084/m9.figshare.17425571.v1 
+#NOVEL_English_19C. https://doi.org/10.6084/m9.figshare.17430485.v1
+#Short Stories Collection. https://doi.org/10.6084/m9.figshare.17425571.v1
 
 library("tm")
 library("slam")
@@ -16,7 +16,7 @@ library("slam")
 setwd("~/Data")
 
 #### Corpus A ####
-corpus1 <- VCorpus(DirSource("SherlockHolmes", encoding = "UTF-8"), readerControl=list(language="English"))
+corpus1 <- VCorpus(DirSource("NOVEL_English_19C", encoding = "UTF-8"), readerControl=list(language="English"))
 corpus1 <- tm_map(corpus1, content_transformer(tolower))
 corpus1 <- tm_map(corpus1, content_transformer(removeNumbers))
 f<-content_transformer(function(x, pattern) gsub(pattern, " ", x))
@@ -44,9 +44,10 @@ emolex<-read.csv("NRC-Emotion-Lexicon-Wordlevel-v0.92.txt", sep="\t", header=F)
 levels(factor(emolex$V2))
 
 #choose an emotion to subset your DTM by
-dic<-emolex[emolex$V2 == "negative",]
+dic<-emolex[emolex$V2 == "positive",]
 #to select two or more
-dic<-emolex[emolex$V2 == "joy" | emolex$V2 == "trust",]
+dic<-emolex[emolex$V2 == "positive" | emolex$V2 == "negative",]
+#to select two or more
 
 #keep only words with a positive value for that emotion type
 dic<-dic[dic$V3 == 1,]
@@ -55,10 +56,12 @@ dic<-dic[dic$V3 == 1,]
 dtm1.dic<-dtm1.scaled[, which(colnames(dtm1.scaled) %in% as.character(dic$V1))]
 dtm2.dic<-dtm2.scaled[, which(colnames(dtm2.scaled) %in% as.character(dic$V1))]
 
-#run significance test
-library(effsize)
+#sum features
 feature.sum1<-row_sums(dtm1.dic)
 feature.sum2<-row_sums(dtm2.dic)
+
+#run significance test
+library(effsize)
 hist(feature.sum1, prob=T)
 curve(dnorm(x, mean=mean(feature.sum1), sd=sd(feature.sum1)), add=TRUE)
 hist(feature.sum2, prob=T)
