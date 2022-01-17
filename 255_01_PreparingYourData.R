@@ -72,6 +72,16 @@ corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf))) #(1
 #dtm.bigram <- DocumentTermMatrix(corpus1, control=list(tokenize = BigramTokenizer2, wordLengths=c(1,Inf)))
 
 
+####### What does a document term matrix tell us? ##################
+#a document term matrix is a table that consists of rows = documents and columns = words (or terms).
+#the values of the cells are the word counts
+#thus we get a table of word frequencies for all documents in your collection
+
+#you can see one by doing the following (we are going to make it really small because right now
+#it is too large to view)
+#then just click on dtm.example in the upper right pane and it will be visualized here
+dtm.example<-as.matrix(corpus1.dtm[ ,which(colnames(corpus1.dtm) %in% stopwords("en"))])
+
 ######## Beginning to understand your data: some initial metrics ###########
 
 #review titles
