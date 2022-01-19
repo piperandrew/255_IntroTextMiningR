@@ -2,13 +2,15 @@
 ######### by Andrew Piper ####################
 ######### CC By 4.0 License ##################
 
-########### Feature Selection #############
+################################################################
+################     Feature Selection       ###################
+################################################################
 
 #Dataset used here:
 #txtlab_Novel150_English 
 #https://doi.org/10.6084/m9.figshare.17425562.v1
 
-##### Recreate your Document Term Matrix #####
+##### Create Document Term Matrix #####
 library("tm")
 library("slam")
 setwd("~/Data")
