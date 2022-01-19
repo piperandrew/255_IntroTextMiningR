@@ -21,21 +21,18 @@ library("slam")
 #this is the folder *above* where your texts are located
 setwd("~/Data")
 
-#### Reading in Your Data: the TM Library #####
+########  Reading in Your Data: the TM Library   ###########
 
 #Read in your corpus
 #the name in "" after DirSource is the name of your folder where your texts are
 #set the language appropriately
 corpus1 <- VCorpus(DirSource("txtlab_Novel150_English", encoding = "UTF-8"), readerControl=list(language="English"))
 
-#Inspect a sample document (metadata)
-inspect(corpus1[26]) #the number in brackets refers to the document number
-
 #Inspect your data (see a portion of the actual text)
 strwrap(corpus1[[26]])[1:5] #the second number in brackets 1:5 refers to the first five lines
 
 
-#### Normalizing Your Data 1: Textual Normalization #####
+########## Normalizing Your Data 1: Textual Normalization ###########
 
 #make all lowercase
 corpus1 <- tm_map(corpus1, content_transformer(tolower))
@@ -55,7 +52,7 @@ corpus1 <- tm_map(corpus1, content_transformer(stripWhitespace))
 #inspect
 strwrap(corpus1[[26]])[1:5]
 
-######## Make a document term matrix ###########
+###########  Make a document term matrix ##############
 
 #run the function on your corpus variable
 corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf))) #(1,Inf) refers to the range of word lengths kept
@@ -72,7 +69,8 @@ corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf))) #(1
 #dtm.bigram <- DocumentTermMatrix(corpus1, control=list(tokenize = BigramTokenizer2, wordLengths=c(1,Inf)))
 
 
-####### What does a document term matrix tell us? ##################
+############  What does a document term matrix tell us? ##################
+
 #a document term matrix is a table that consists of rows = documents and columns = words (or terms).
 #the values of the cells are the word counts
 #thus we get a table of word frequencies for all documents in your collection
@@ -82,7 +80,34 @@ corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf))) #(1
 #then just click on dtm.example in the upper right pane and it will be visualized here
 dtm.example<-as.matrix(corpus1.dtm[ ,which(colnames(corpus1.dtm) %in% stopwords("en"))])
 
+
+##########  Normalizing Your Data 2: Mathematical Normalization ########
+
+#Because word counts vary considerably from word to word and
+#from document to document for many tasks it is important 
+#to adjust the raw frequencies above (but not always!)
+#the first method does so by adjusting frequencies according to the
+#document lengths; the second does so by adjusting word frequencies by
+#their document frequency (i.e. in how many documents they appear)
+#see the book for further explanation
+
+#Method 1: Scaling
+#divide the counts by the total number of words in each document.
+dtm.scaled<-corpus1.dtm/row_sums(corpus1.dtm)
+
+#Method 2: Tf-Idf
+#tfidf = term frequency * inverse document frequency
+#this weights words by how infrequent they are in the corpus (i.e. across all documents)
+#the more infrequent they are across documents the higher the word's score and vice versa
+dtm.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
+
+##### Now inspect your DTM #####
+dtm.example.scaled<-as.matrix(dtm.example/row_sums(corpus1.dtm))
+
+
+############################################################################
 ######## Beginning to understand your data: some initial metrics ###########
+############################################################################
 
 #review titles
 row.names(corpus1.dtm)
@@ -120,21 +145,3 @@ summary(row_sums(corpus1.dtm))
 which.max(row_sums(corpus1.dtm))
 row_sums(corpus1.dtm)[13]
 
-#### Normalizing Your Data 2: Mathematical Normalization #####
-#Because word counts vary considerably from word to word and
-#from document to document for many tasks it is important 
-#to adjust the raw frequencies above (but not always!)
-#the first method does so by adjusting frequencies according to the
-#document lengths; the second does so by adjusting word frequencies by
-#their document frequency (i.e. in how many documents they appear)
-#see the book for further explanation
-
-#Method 1: Scaling
-#divide the counts by the total number of words in each document.
-dtm.scaled<-corpus1.dtm/row_sums(corpus1.dtm)
-
-#Method 2: Tf-Idf
-#tfidf = term frequency * inverse document frequency
-#this weights words by how infrequent they are in the corpus (i.e. across all documents)
-#the more infrequent they are across documents the higher the word's score and vice versa
-dtm.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
