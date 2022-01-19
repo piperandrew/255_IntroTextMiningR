@@ -2,8 +2,20 @@
 ######### by Andrew Piper ####################
 ######### CC By 4.0 License ##################
 
+################################################################################
+#############   CORPUS COMPARISON - Distinctive features      ##################
+################################################################################
 
-#############   CORPUS COMPARISON      ##################
+#In this script we will learn how to ingest two separate corpora and compare them
+
+#Part2. We will then learn methods for testing *every* feature of interest (usually words)
+#And ranking words by their "distinctiveness" -- how much more frequent is Feature X in Corpus A than Corpus B?
+#Rather than condition on one feature, we will look at all available features
+#Keep in mind this is akin to running multiple hypothesis tests so we need to do some sort of
+#correction because we will inevitably find some variables that differ accidentally
+#(if you run enough tests one of them will accidentally return a positive result)
+#for more reading see:
+#https://en.wikipedia.org/wiki/Bonferroni_correction
 
 library("tm")
 library("slam")
