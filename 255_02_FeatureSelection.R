@@ -147,6 +147,8 @@ sort(col_means(dtm.sparse), decreasing = T)[(length(colnames(dtm.sparse))-4):len
 
 #if you want to visualize this as a table
 dtm<-as.matrix(dtm.sparse)
+dtm.sparse<-as.matrix(dtm.sparse)
+
 
 #you're good to go!
 
