@@ -2,7 +2,9 @@
 ######### by Andrew Piper ####################
 ######### CC By 4.0 License ##################
 
-########### Preparing your data #############
+#####################################################
+##############   Preparing your data    #############
+#####################################################
 
 #The first thing you will need to do is install your libraries
 #You only need to do this the first time.
