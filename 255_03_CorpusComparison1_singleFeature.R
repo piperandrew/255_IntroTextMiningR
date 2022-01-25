@@ -63,6 +63,9 @@ feature.sum1<-row_sums(corpus1.feature)
 feature.sum2<-row_sums(corpus2.feature)
 
 #Compare the mean / median value of the feature for each corpus
+#For tips on how to understand testing means of independent samples:
+#http://statistics-help-for-students.com/How_do_I_report_independent_samples_T_test_data_in_APA_style.htm#.Ye7Doi_72v5
+#https://statistics.laerd.com/spss-tutorials/independent-t-test-using-spss-statistics.php
 
 #In order to compare the means of two samples those samples need to be NORMALLY distributed
 

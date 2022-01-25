@@ -137,7 +137,7 @@ sort(row_sums(corpus1.dtm), decreasing = T)[1:10] #change decreasing=F to see bo
 #in this case we want to know the distribution of book length (or word count)
 #how long are our books and what length are most of our books between?
 options(scipen=999)
-hist(row_sums(corpus1.dtm), xlab="word count", main="Histogran of Word Counts")
+hist(row_sums(corpus1.dtm), xlab="word count", main="Histogram of Word Counts")
 
 #what is the average length of a novel?
 #the summary function does something similar without the visualisation

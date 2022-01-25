@@ -11,6 +11,7 @@
 
 library("tm")
 library("proxy")
+library("slam")
 setwd("~/Data")
 
 #Dataset for this example:
