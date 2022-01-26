@@ -54,6 +54,10 @@ myWords<-c("the", "this", "that", "these", "those")
 #myWords<-c("she", "he")
 #myWords<-c("clue")
 
+#check if the word or feature is in the data
+which(colnames(dtm1.scaled) %in% myWords)
+which(colnames(dtm2.scaled) %in% myWords)
+
 #extract the combined frequency of the feature
 #first subset your DTM by the words in your feature
 corpus1.feature<-dtm1.scaled[,colnames(dtm1.scaled) %in% myWords]
