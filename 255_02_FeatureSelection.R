@@ -67,7 +67,6 @@ text(1:3, unname(top.words[1:3]), labels=c(names(top.words[1:3])), cex=.7, pos=4
 #here is a list of TM library stopwords
 stopwords("en") #notice how the punctuation is still there
 
-
 #### Keeping ONLY Stopwords ####
 
 #subset your DTM by *keeping* only stopwords
@@ -119,7 +118,7 @@ dtm.top10k<-as.matrix(dtm.top10k)
 #eg: .4 = you want to keep words that appear in at least 60% of your documents
 dtm.sparse<-removeSparseTerms(dtm.nostop, 0.4)
 
-#inspect the top 5 and bottom 5 words of your matrix
+#inspect the top 5 most frequent and bottom 5 least frequent words of your matrix
 sort(col_means(dtm.sparse), decreasing = T)[1:5]
 sort(col_means(dtm.sparse), decreasing = T)[(length(colnames(dtm.sparse))-4):length(colnames(dtm.sparse))]
 
