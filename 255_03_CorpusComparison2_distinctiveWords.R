@@ -52,8 +52,10 @@ dtm2.scaled<-corpus2.dtm/row_sums(corpus2.dtm)
 ############   DISTINCTIVE FEATURES - ALL   ##############
 #Here we are going to discover "distinctive features" of each of our corpora
 #For our purposes we are going to use what is called a log-likelihood test (called G-squared or "Dunning's" test)
+#The original article is here: https://aclanthology.org/J93-1003.pdf
+#Blog post: http://tdunning.blogspot.com/2008/03/surprise-and-coincidence.html
 
-#The way we will model this is to ask how much more likely is WORD X to appear in CORPUS A than B
+#The way we will model this is to ask how much more likely is WORD X to appear in CORPUS A than B?
 #The way calculate this is by making what are known as "contingency tables".
 #This allows us to compare the rate of a given word relative to the overall number of words in that corpus
 #They have the following structure:
@@ -62,6 +64,18 @@ dtm2.scaled<-corpus2.dtm/row_sums(corpus2.dtm)
 #Word       x           y
 #NotWord    z           w
 
+###### EXAMPLE: #######
+
+#So what we are comparing is the rate at which a word occurs in Corpus A v. Corpus B given all the words in Corpus A and B. Simple Example:
+#Let's say that one group of texts (A) uses the word "sandwich" 100 times.
+#The other group (B) uses it 200 times.
+#At first glance this looks like B uses the word more.
+#But it turns out that B uses a lot more words overall: 
+#Let's say B has 10,000 words total, while A only uses 1,000 words.
+#So sandwich occurs 100 times for every 1,000 words in A but 200 times for every 10,000 words in B.
+#Thus the likelihood that group A uses sandwich is much higher (1/10 v. 2/100).
+#In this example x = 100, z = 900, y = 200, w = 9,800.
+
 #NOTE: we use raw counts not scaled counts for this measure
 
 ### Subset Corpora by intersecting words
@@ -69,8 +83,11 @@ dtm2.scaled<-corpus2.dtm/row_sums(corpus2.dtm)
 #(If I use a word and you never do then the likelihood of me using it is infinity more than you...)
 
 #First reduce our corpora to non-sparse words
-#adjust integer based on the size of your data and length of documents
-#because we are using short stories we require words to be in at least 20% of documents
+#Note: we have not removed stopwords. Generally I recommend keeping them in for these tests
+#Remember: adjust the integer below based on the size of your data and length of documents
+#Because we are using *short* stories we require words to be only in at least 20% of documents
+#thus we set it at 0.8. Change this depending on the nature of your documents and how many words
+#you want to test (the more words the longer it takes...)
 corpus1.sparse<-removeSparseTerms(corpus1.dtm, 0.8)
 corpus2.sparse<-removeSparseTerms(corpus2.dtm, 0.8)
 
