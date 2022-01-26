@@ -37,7 +37,6 @@ f<-content_transformer(function(x, pattern) gsub(pattern, " ", x))
 corpus1 <- tm_map(corpus1, f, "[[:punct:]]")
 corpus1 <- tm_map(corpus1, content_transformer(stripWhitespace)) 
 corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf))) #(1,Inf) refers to the range of word lengths kept
-dtm1.scaled<-corpus1.dtm/row_sums(corpus1.dtm)
 
 #### Corpus B ####
 corpus2 <- VCorpus(DirSource("ShortStories_English", encoding = "UTF-8"), readerControl=list(language="English"))
@@ -47,7 +46,6 @@ f<-content_transformer(function(x, pattern) gsub(pattern, " ", x))
 corpus2 <- tm_map(corpus2, f, "[[:punct:]]")
 corpus2 <- tm_map(corpus2, content_transformer(stripWhitespace)) 
 corpus2.dtm<-DocumentTermMatrix(corpus2, control=list(wordLengths=c(1,Inf))) #(1,Inf) refers to the range of word lengths kept
-dtm2.scaled<-corpus2.dtm/row_sums(corpus2.dtm)
 
 ############   DISTINCTIVE FEATURES - ALL   ##############
 #Here we are going to discover "distinctive features" of each of our corpora
@@ -76,9 +74,11 @@ dtm2.scaled<-corpus2.dtm/row_sums(corpus2.dtm)
 #Thus the likelihood that group A uses sandwich is much higher (1/10 v. 2/100).
 #In this example x = 100, z = 900, y = 200, w = 9,800.
 
-#NOTE: we use raw counts not scaled counts for this measure
 
-### Subset Corpora by intersecting words
+#####  Subset Corpora by intersecting words #####
+
+#***NOTE: we use raw counts not scaled counts for this measure, i.e. corpus1.dtm
+
 #To run this we first need to subset our two corpora by words they have in common
 #(If I use a word and you never do then the likelihood of me using it is infinity more than you...)
 

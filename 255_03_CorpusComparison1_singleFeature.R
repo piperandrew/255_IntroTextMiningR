@@ -77,9 +77,9 @@ hist(rnorm(100, mean = 5, sd = 3), prob=T)
 curve(dnorm(x, mean=5, sd=3), add=TRUE)
 
 #Same thing using your data
-hist(feature.sum1, prob=T)
+hist(feature.sum1, prob=T, main="Histogram of Feature in Group 1")
 curve(dnorm(x, mean=mean(feature.sum1), sd=sd(feature.sum1)), add=TRUE)
-hist(feature.sum2, prob=T)
+hist(feature.sum2, prob=T, main="Histogram of Feature in Group 2")
 curve(dnorm(x, mean=mean(feature.sum2), sd=sd(feature.sum2)), add=TRUE)
 
 #### Step 2: Use a statistical test for normality
@@ -99,6 +99,14 @@ mean(feature.sum1)
 mean(feature.sum2)
 sd(feature.sum1)
 sd(feature.sum2)
+
+
+#### EXAMPLE OF WRITING YOUR RESULTS #####
+#"An independent-samples t-test was conducted to compare the rate of determiners
+#in detective fiction by Sherlock Holmes and literary short fiction. 
+#There was a significantly higher rate of determiners in detective fiction (M=0.077, SD=0.0069) 
+#than literary fiction (M=0.068, SD=0.014); t(69.7)=4.15, p = 9.315e-05."
+
 
 #to observe how similar your distributions are, plot the two distributions on the same graph
 #this uses a density plot
@@ -127,8 +135,14 @@ median(feature.sum1)
 median(feature.sum2)
 #report how much higher/lower median1 is to median2
 median(feature.sum1)/median(feature.sum2)
-#2.5 = "The median value of my feature is 2.5 times higher in group 1 than it is in group 2..."
 
+####   EXAMPLE OF WRITING YOUR RESULTS: #####
+#"According to a Wilcoxon rank-sum test with continuity correction, 
+#detective fiction uses significantly more determiners than short fiction 
+#in our sample of short stories (p = 2.463e-05). 
+#We found that the median value for detective fiction (0.07684468) 
+#was 19% higher than the median value for short fiction (0.06463036) 
+#resulting in an overall increase of 0.0122 or roughly 6 determiners per page."
 
 
 
