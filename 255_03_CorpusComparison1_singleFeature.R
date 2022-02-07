@@ -1,6 +1,6 @@
-######### LLCU 255 Introduction to Literary Text Mining ##########
-######### by Andrew Piper ####################
-######### CC By 4.0 License ##################
+#########    LLCU 255 Introduction to Literary Text Mining    ##################
+#########                 by Andrew Piper                     ##################
+#########                CC By 4.0 License                    ##################
 
 #########################################################################
 #############   CORPUS COMPARISON - Single Feature     ##################
