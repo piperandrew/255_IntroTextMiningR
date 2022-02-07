@@ -1,8 +1,10 @@
-######### LLCU 255 Introduction to Literary Text Mining ##########
-######### by Andrew Piper ####################
-######### CC By 4.0 License ##################
+######### LLCU 255 Introduction to Literary Text Mining ####################
+#########            by Andrew Piper                    ####################
+#########            CC By 4.0 License                  ####################
 
-################# Clustering ###########################
+#############################################################
+#################    Clustering   ###########################
+#############################################################
 
 #this week we will learn how to create a vector space model to model semantic
 #relationships between documents (i.e. their similarity in terms of their style or content)
@@ -34,15 +36,15 @@ dtm.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
 stop<-stopwords("en")
 stop<-unlist(strsplit(stop,"[[:punct:]]"))
 stop<-unique(stop)
-#add extra stopwords
-stop<-append(stop, c("said", "one", "will"))
-stop<-append(stop, tolower(as.roman(1:1000)))
 dtm.stop<-as.matrix(dtm.scaled[ ,which(colnames(dtm.scaled) %in% stop)])
 
 #STOPWORDS + NON-SPARSE WORDS
 dtm.sparse.stop<-removeSparseTerms(dtm.scaled, 0.4)
 
 #NO STOPWORDS + NON-SPARSE WORDS
+#add extra stopwords
+stop<-append(stop, c("said", "one", "will"))
+stop<-append(stop, tolower(as.roman(1:1000)))
 dtm.nostop<-dtm.scaled[ ,which(!colnames(dtm.scaled) %in% stop)]
 dtm.sparse<-removeSparseTerms(dtm.nostop, 0.4)
 
@@ -74,6 +76,8 @@ plot(target, main="Similarity of Novels to Pride and Prejudice", ylab="Cosine Si
 library("cluster")
 library("dendextend")
 library("splitstackshape")
+
+#to get a list of similarity measures
 summary(pr_DB)
 
 ####  This takes your DTMs above as input  ######
@@ -83,14 +87,18 @@ summary(pr_DB)
 #dtm.tfidf
 
 #make a similarity matrix
-#compare sparse and stop
-sim.m<-simil(as.matrix(dtm.stop), method = "cosine") #change cosine to correlation or Jaccard or any other measure
+#compare sparse and stop by changing the name of your matrix
+#you can change "cosine" to "correlation" or "Jaccard" or any other similarity measure
+#to get a list of possible similarity measures, run "summary(pr_DB)"
+sim.m<-simil(as.matrix(dtm.stop), method = "cosine")
 
-#transfer to a distance matrix
+#transform into a distance matrix for clustering
+#a distance matrix is the inverse of a similarity matrix :)
 dist.m<-pr_simil2dist(sim.m)
 
 #cluster your documents using hierarchical clustering
-fit<-hclust(dist.m, method = "ward.D2") #other options for "ward.D2" = "complete", "single", or "centroid" (there are more...)
+#other options for method are "ward.D2" = "complete", "single", or "centroid" (there are more...)
+fit<-hclust(dist.m, method = "ward.D2") 
 
 #predict the optimal number of clusters
 dend_k<-find_k(fit, krange = 2:(nrow(dist.m)-1))
