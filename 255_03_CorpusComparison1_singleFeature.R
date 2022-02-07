@@ -147,6 +147,7 @@ median(feature.sum1)/median(feature.sum2)
 #We found that the median value for detective fiction (0.07684468) 
 #was 19% higher than the median value for short fiction (0.06463036) 
 #resulting in an overall increase of 0.0122 or roughly 6 determiners per page."
+#we use 500 words as the ideal representation of a page thus 0.0122*500 = 6
 
 
 
