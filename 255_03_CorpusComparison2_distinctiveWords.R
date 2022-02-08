@@ -154,3 +154,6 @@ for (i in 1:nrow(results)){
 }
 results<-results[order(-results$G2_Sorted),]
 
+#save your results
+write.csv(results, file="MyResults.csv", row.names = F)
+
