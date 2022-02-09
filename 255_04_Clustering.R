@@ -17,7 +17,7 @@ library("slam")
 setwd("~/Data")
 
 #Dataset for this example:
-#NovelEnglishGenderSample. https://doi.org/10.6084/m9.figshare.17433266.v1 
+#NovelEnglishGenderSample. https://doi.org/10.6084/m9.figshare.17433266.v2 
 
 #make your DTM
 corpus1 <- VCorpus(DirSource("NovelEnglishGenderSample", encoding = "UTF-8"), readerControl=list(language="English"))
@@ -90,7 +90,7 @@ summary(pr_DB)
 #compare sparse and stop by changing the name of your matrix
 #you can change "cosine" to "correlation" or "Jaccard" or any other similarity measure
 #to get a list of possible similarity measures, run "summary(pr_DB)"
-sim.m<-simil(as.matrix(dtm.stop), method = "cosine")
+sim.m<-simil(as.matrix(dtm.sparse), method = "cosine")
 
 #transform into a distance matrix for clustering
 #a distance matrix is the inverse of a similarity matrix :)
