@@ -122,7 +122,6 @@ mean(feature.sum1)-mean(feature.sum2)
 #on average 4.5 more per page.
 (mean(feature.sum1)-mean(feature.sum2))*500
 
-
 #to observe how similar your distributions are, plot the two distributions on the same graph
 #this uses a density plot
 #the dark line = Corpus A
