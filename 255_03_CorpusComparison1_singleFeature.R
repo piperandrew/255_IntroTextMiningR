@@ -111,6 +111,17 @@ sd(feature.sum2)
 #There was a significantly higher rate of determiners in detective fiction (M=0.077, SD=0.0069) 
 #than literary fiction (M=0.068, SD=0.014); t(69.7)=4.15, p = 9.315e-05."
 
+#You can also add what this translates into as a per page value. To do this you would first:
+
+#subtract the two means
+mean(feature.sum1)-mean(feature.sum2)
+
+#then multiply that difference by 500 words (an idealized page)
+#this gives you a per page amount
+#in this example you should get 4.5, i.e. we see Sherlock Holmes stories using determiners
+#on average 4.5 more per page.
+(mean(feature.sum1)-mean(feature.sum2))*500
+
 
 #to observe how similar your distributions are, plot the two distributions on the same graph
 #this uses a density plot
