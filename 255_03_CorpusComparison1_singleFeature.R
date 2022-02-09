@@ -137,8 +137,13 @@ wilcox.test(feature.sum1, feature.sum2)
 #report the medians rather than the means
 median(feature.sum1)
 median(feature.sum2)
-#report how much higher/lower median1 is to median2
+#report how much higher/lower median1 is to median2 as a ratio
 median(feature.sum1)/median(feature.sum2)
+#report how much higher/lower median1 is to median2 as a raw difference
+median(feature.sum1) - median(feature.sum2)
+#report how much this difference translates into per page counts
+#we use 500 words as an idealized page size
+(median(feature.sum1) - median(feature.sum2))*500
 
 ####   EXAMPLE OF WRITING YOUR RESULTS: #####
 #"According to a Wilcoxon rank-sum test with continuity correction, 
@@ -147,7 +152,6 @@ median(feature.sum1)/median(feature.sum2)
 #We found that the median value for detective fiction (0.07684468) 
 #was 19% higher than the median value for short fiction (0.06463036) 
 #resulting in an overall increase of 0.0122 or roughly 6 determiners per page."
-#we use 500 words as the ideal representation of a page thus 0.0122*500 = 6
 
 
 
