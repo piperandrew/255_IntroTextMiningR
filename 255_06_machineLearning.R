@@ -1,8 +1,16 @@
-######### LLC 255 Introduction to Literary Text Mining ###########
-######### by Andrew Piper ####################
-######### CC By 4.0 License ##################
+######### LLCU 255 Introduction to Literary Text Mining ####################
+#########            by Andrew Piper                    ####################
+#########            CC By 4.0 License                  ####################
 
-######### Machine Learning ###################
+#############################################################
+#################    Machine Learning   #####################
+#############################################################
+
+#We use machine learning (or supervised learning) when we want to test the predictability of
+#some class which we already have knowledge about. Unlike clustering where you don't have
+#strong assumptions about the identity of your documents, with machine learning we start
+#with the idea that we know what class or category they belong to. And then we try to build
+#a model that can predict that class and we observe how accurate the model is.
 
 library("kernlab")
 library("caret")
@@ -30,13 +38,13 @@ corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf)))
 dtm.scaled<-corpus1.dtm/row_sums(corpus1.dtm)
 dtm.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
 
-#DTM W ONLY STOPWORDS
+#DTM - STOPWORDS
 stop<-stopwords("en")
 stop<-unlist(strsplit(stop,"[[:punct:]]"))
 stop<-unique(stop)
 dtm.stop<-as.matrix(dtm.scaled[ ,which(colnames(dtm.scaled) %in% stop)])
 
-#DTM W NO STOPWORDS + NON-SPARSE WORDS
+#DTM - NO STOPWORDS + NON-SPARSE WORDS
 #add extra stopwords (specific to novels)
 stop.plus<-append(stop, c("said", "one", "will"))
 stop.plus<-append(stop.plus, tolower(as.roman(1:1000)))
@@ -51,7 +59,7 @@ dtm.tfidf<-weightTfIdf(dtm.sparse, normalize = TRUE)
 #This involves creating a column called "corpus" which contains the "class" to which each document belongs
 
 #first turn DTM into a data frame
-#default = dtm.sparse -- you can change this!
+#default = dtm.sparse
 dtm<-as.data.frame(as.matrix(dtm.sparse))
 
 ### Method 1 = Extract class from metadata
@@ -71,9 +79,9 @@ dtm$corpus<-factor(meta$gender)
 
 #extract corpus data from filename
 #split on underscores
-List1<-strsplit(row.names(dtm), "_")
+#List1<-strsplit(row.names(dtm), "_")
 #extract just the first element (text before the first underscore) and turn it into a column
-dtm$corpus<-as.factor(sapply(List1,"[[",1))
+#dtm$corpus<-as.factor(sapply(List1,"[[",1))
 
 #### Create Folds ######
 #folds are your data divided into equal sized units that are balanced by your classes
