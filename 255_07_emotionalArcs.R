@@ -1,9 +1,10 @@
-######### LLCU 255 Introduction to Literary Text Mining ##########
-######### by Andrew Piper ####################
-######### CC By 4.0 License ##################
+############      LLCU 255 Introduction to Literary Text Mining ####################
+############                by Andrew Piper                     ####################
+###########                 CC By 4.0 License                   ####################
 
-
-################    Emotional Arcs    ####################
+#############################################################
+###################    Emotional Arcs    ####################
+#############################################################
 
 #this script generates a plot of a book's "emotional arc". Emotional arcs help visualize
 #the fortunes surrounding a book's events. How much vicissitude is there? Where are the high / low points?
@@ -30,9 +31,11 @@ setwd("")
 lex<-read.csv("NRC-VAD-Lexicon.txt", sep="\t", stringsAsFactors = F)
 
 #ingest work
-work<-scan("00010241_1925_FScottFitzgerald_TheGreatGatsby.txt", what="character", quote="", quiet=T)
+#work<-scan("00010241_1925_FScottFitzgerald_TheGreatGatsby.txt", what="character", quote="", quiet=T)
+work<-scan("Cindarella.txt", what="character", quote="", quiet=T)
 
-#clean the text
+###### clean the text #######
+
 #remove numbers
 work<-gsub("\\d", "", work)
 #make all lowercase
@@ -160,7 +163,6 @@ specificity<-.3
 
 ggplot(emotion.sub, aes(x=word, y=norm, fill = type)) +
   theme_bw() +
-  #geom_line() +
   geom_bar(stat="identity") +
   geom_smooth(span = specificity, se=F) +
   geom_hline(yintercept= 0) +
