@@ -188,8 +188,12 @@ bottom.df[1:10,]
 
 #output text for those segments
 #first define which segment, i.e. which one of the top 10, in descending order (1:10)
-#s=1 looks at the most positive / negative passage
+#s=1 looks at the most positive / negative passage, s = 2 selects the next most positive
 s=1
+
+#extract the valence of s passage
+top.df[s,2]
+bottom.df[s,2]
 
 #extract passage - positive
 test<-work[(top.df$word[s]-250):top.df$word[s]]
@@ -197,12 +201,9 @@ test<-work[(top.df$word[s]-250):top.df$word[s]]
 #extract passage - negative
 test<-work[(bottom.df$word[s]-250):bottom.df$word[s]]
 
+#paste the passage together
+test<-paste(test, sep=" ", collapse=" ")
+
 #type "test" to see the passage onscreen
 test
 
-#get the sentiment score
-valence.vector<-unlist(sapply(test, function (x){
-  lex$Valence[lex$Word == x]
-}))
-#type "valence.vector" to see the individual words and their scores
-mean(valence.vector)
