@@ -201,6 +201,14 @@ test<-work[(top.df$word[s]-250):top.df$word[s]]
 #extract passage - negative
 test<-work[(bottom.df$word[s]-250):bottom.df$word[s]]
 
+##### if you want to look at adjacent passages to the one selected you can simply add by 250 words like this:
+
+#to go backwards just keep adding 250 to both integers here (500/250)
+test<-work[(top.df$word[s]-500):(top.df$word[s]-250)]
+
+#to go forwards just keep adding 250 to both integers here (0/250)
+test<-work[(top.df$word[s]+0):(top.df$word[s]+250)]
+
 #paste the passage together
 test<-paste(test, sep=" ", collapse=" ")
 
