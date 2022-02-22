@@ -136,10 +136,10 @@ emotion.sub<-emotion.df[which(emotion.df$type %in% emotion.dimension),]
 
 # set the granularity of smoothing -- how general do you want the arc to be?
 #recommended values -- you can play with these values to observe effects of arcs
-#very general = .3
-#medium = .2
-#specific = .1
-specificity<-.3
+#for long stories: #very general = .3 #medium = .2 #specific = .1
+#for short stories: #very general =.75 #medium = .5 #specific = .3
+
+specificity<-.75
 
 #plot
 ggplot(emotion.sub, aes(x=word, y=norm, color = type)) +
@@ -147,6 +147,11 @@ ggplot(emotion.sub, aes(x=word, y=norm, color = type)) +
   geom_smooth(span = specificity, se=F) +
   geom_hline(yintercept= 0) +
   labs(x="Word Count", y="Emotion Score", title="The emotional arc of your book")
+
+#to explore any section of your story do this. 
+#Change the integers to identify the word count you want to inspect
+paste(work[2500:3000], sep=" ", collapse=" ") 
+
 
 ######### Plot 2 - NO SMOOTHING #######
 #This allows you to observe all sections
@@ -201,17 +206,17 @@ test<-work[(top.df$word[s]-250):top.df$word[s]]
 #extract passage - negative
 test<-work[(bottom.df$word[s]-250):bottom.df$word[s]]
 
-##### if you want to look at adjacent passages to the one selected you can simply add by 250 words like this:
-
-#to go backwards just keep adding 250 to both integers here (500/250)
-test<-work[(top.df$word[s]-500):(top.df$word[s]-250)]
-
-#to go forwards just keep adding 250 to both integers here (0/250)
-test<-work[(top.df$word[s]+0):(top.df$word[s]+250)]
-
 #paste the passage together
 test<-paste(test, sep=" ", collapse=" ")
 
 #type "test" to see the passage onscreen
 test
+
+##### if you want to look at adjacent passages to the one selected you can simply add by 250 words like this:
+#to go backwards just keep adding 250 to both integers here (500/250)
+test<-work[(top.df$word[s]-500):(top.df$word[s]-250)]
+#to go forwards just keep adding 250 to both integers here (0/250)
+test<-work[(top.df$word[s]+0):(top.df$word[s]+250)]
+
+
 
