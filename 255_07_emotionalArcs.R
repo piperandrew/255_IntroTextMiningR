@@ -164,6 +164,9 @@ emotion.dimension<-c("valence")
 emotion.sub<-emotion.df[which(emotion.df$type %in% emotion.dimension),]
 
 #set specificity of smoothing
+#recommended values -- you can play with these values to observe effects of arcs
+#for long stories: #very general = .3 #medium = .2 #specific = .1
+#for short stories: #very general =.75 #medium = .5 #specific = .3
 specificity<-.3
 
 ggplot(emotion.sub, aes(x=word, y=norm, fill = type)) +
