@@ -160,7 +160,7 @@ cv.results<-lapply(folds, function(x){
 })
 unlist(cv.results) #this shows you the F1 score for each fold
 mean(unlist(cv.results)) #this is the average F1 score for all folds
-sd(unlist(cv.results))
+sd(unlist(cv.results)) #this is the standard deviation for all folds
 
 
 ####### Random Forests ########

@@ -31,8 +31,8 @@ setwd("")
 lex<-read.csv("NRC-VAD-Lexicon.txt", sep="\t", stringsAsFactors = F)
 
 #ingest work
-#work<-scan("00010241_1925_FScottFitzgerald_TheGreatGatsby.txt", what="character", quote="", quiet=T)
-work<-scan("Cindarella.txt", what="character", quote="", quiet=T)
+work<-scan("00010241_1925_FScottFitzgerald_TheGreatGatsby.txt", what="character", quote="", quiet=T)
+#work<-scan("Cindarella.txt", what="character", quote="", quiet=T)
 
 ###### clean the text #######
 
@@ -139,7 +139,7 @@ emotion.sub<-emotion.df[which(emotion.df$type %in% emotion.dimension),]
 #for long stories: #very general = .3 #medium = .2 #specific = .1
 #for short stories: #very general =.75 #medium = .5 #specific = .3
 
-specificity<-.75
+specificity<-.3
 
 #plot
 ggplot(emotion.sub, aes(x=word, y=norm, color = type)) +
@@ -150,7 +150,7 @@ ggplot(emotion.sub, aes(x=word, y=norm, color = type)) +
 
 #to explore any section of your story do this. 
 #Change the integers to identify the word count you want to inspect
-paste(work[2500:3000], sep=" ", collapse=" ") 
+paste(work[500:750], sep=" ", collapse=" ") 
 
 
 ######### Plot 2 - NO SMOOTHING #######
@@ -188,11 +188,11 @@ type<-c("valence")
 #find top 10 high  / low points
 top.df<-emotion.df[emotion.df$type == type,]
 top.df<-top.df[order(-top.df$norm),]
-top.df[1:10,]
+top.df[1:5,]
 
 bottom.df<-emotion.df[emotion.df$type == type,]
 bottom.df<-bottom.df[order(bottom.df$norm),]
-bottom.df[1:10,]
+bottom.df[1:5,]
 
 #output text for those segments
 #first define which segment, i.e. which one of the top 10, in descending order (1:10)
@@ -210,16 +210,25 @@ test<-work[(top.df$word[s]-250):top.df$word[s]]
 test<-work[(bottom.df$word[s]-250):bottom.df$word[s]]
 
 #paste the passage together
-test<-paste(test, sep=" ", collapse=" ")
+test.passage<-paste(test, sep=" ", collapse=" ")
 
 #type "test" to see the passage onscreen
-test
+test.passage
 
-##### if you want to look at adjacent passages to the one selected you can simply add by 250 words like this:
-#to go backwards just keep adding 250 to both integers here (500/250)
-test<-work[(top.df$word[s]-500):(top.df$word[s]-250)]
-#to go forwards just keep adding 250 to both integers here (0/250)
-test<-work[(top.df$word[s]+0):(top.df$word[s]+250)]
+#to render your passage as the words' valence/arousal scores
 
+#to see valence in your passage
+valence.vector<-unlist(sapply(test, function (x){
+  lex$Valence[lex$Word == x]
+}))
+
+#to see arousal in your passage
+arousal.vector<-unlist(sapply(sub, function (x){
+  lex$Arousal[lex$Word == x]
+}))
+
+#remember to observe any passage window do this and change the integers
+#to the window and window size you want
+paste(work[500:750], sep=" ", collapse=" ") 
 
 
