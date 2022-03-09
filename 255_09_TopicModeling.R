@@ -192,7 +192,7 @@ term_dis[,as.numeric(names(prob_sample_sort))[1]]
 ########   WHAT ARE THE DOCUMENTS ASSOCIATED WITH A PARTICULAR TOPIC  ########
 
 #first, define your topic
-topic.no<-7
+topic.no<-13
 
 #subset all documents by that topic
 prob_sample<-topic_doc_probs[,topic.no]
@@ -208,7 +208,6 @@ row.names(topic_doc_probs)[which(topic_doc_probs[,topic.no] == max(prob_sample))
 
 #observe documents that appear in the 99th percentile for this topic
 cut<-unname(quantile(topic_doc_probs[,topic.no], .99))
-row.names(topic_doc_probs)[which(topic_doc_probs[,topic.no] > cut)]
 
 #subset by the top documents with this topic
 top.docs<-topic_doc_probs[row.names(topic_doc_probs)[which(topic_doc_probs[,topic.no] > cut)],]
@@ -216,7 +215,7 @@ top.docs<-topic_doc_probs[row.names(topic_doc_probs)[which(topic_doc_probs[,topi
 #this orders the table from highest to lowest - change the integer to the desired topic number
 #with this information you can now go back to the original documents and read them and see how well that
 #topic is actually represented
-top.docs<-top.docs[order(-top.docs$`7`),]
+top.docs<-top.docs[order(-top.docs$`13`),]
 
 
 
