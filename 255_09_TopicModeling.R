@@ -237,7 +237,7 @@ top.docs<-top.docs[order(-top.docs$`7`),]
 
 #load metadata
 setwd("")
-meta<-read.csv("FanFic_Queer_NYT_Meta.csv")
+meta<-read.csv("TopicModel_NYT_FanFic_Meta.csv")
 
 #separate the topic probability table by metadata
 group1<-topic_doc_probs[row.names(topic_doc_probs) %in% meta$Filename[meta$Class == "FAN"],]
