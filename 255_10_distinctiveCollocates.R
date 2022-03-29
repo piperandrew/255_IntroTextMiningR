@@ -77,7 +77,7 @@ for (i in 1:length(f.names)){
   work.v<-text.prep(f.names[i])
   
   #store all words to word count vector
-  word.count.v<-append(word.count.v, work.v)
+  #word.count.v<-append(word.count.v, work.v)
   
   #create index of locations of keyword in the vector
   key.index<-which(work.v == keyword) # position of keyword
@@ -100,16 +100,13 @@ for (i in 1:length(f.names)){
   }
 }
 
-#Create table of counts
+#*****Create table of counts -- remember to adjust which line you run depending on first or second run!!!
 
 #For your FIRST keyword/text collection
-collocate.df<-data.frame(sort(table(collocate.v), decreasing = T))
-word.count.df1<-data.frame(sort(table(word.count.v), decreasing = T))
+collocate.df1<-data.frame(sort(table(collocate.v), decreasing = T))
 
 #For your SECOND keyword/text collection
-collocate.df<-data.frame(sort(table(collocate.v), decreasing = T))
-word.count.df2<-data.frame(sort(table(word.count.v), decreasing = T))
-
+#collocate.df2<-data.frame(sort(table(collocate.v), decreasing = T))
 
 #####################      B. Identify Distinctive Collocates      ######################
 
@@ -127,27 +124,23 @@ word.count.df2<-data.frame(sort(table(word.count.v), decreasing = T))
 #we match the two data frames of word counts and we only keep words that are in both
 
 #first turn into strings not factors
-word.count.df1$word.count.v<-as.character(word.count.df1$word.count.v)
-word.count.df2$word.count.v<-as.character(word.count.df2$word.count.v)
+collocate.df1$collocate.v<-as.character(collocate.df1$collocate.v)
+collocate.df2$collocate.v<-as.character(collocate.df2$collocate.v)
 
 #then sort alphabetically
-word.count.df1<-word.count.df1[order(word.count.df1$word.count.v),]
-word.count.df2<-word.count.df2[order(word.count.df2$word.count.v),]
+collocate.df1<-collocate.df1[order(collocate.df1$collocate.v),]
+collocate.df2<-collocate.df2[order(collocate.df2$collocate.v),]
 
-#remove words with fewer than X occurrences (default = 50)
-word.count.df1<-word.count.df1[which(word.count.df1$Freq > 99),]
-word.count.df2<-word.count.df2[which(word.count.df2$Freq > 99),]
+#merge
+collocate.all<-merge(collocate.df1, collocate.df2, by="collocate.v", all = T)
+collocate.all[is.na(collocate.all)]<-0
 
-#then remove any non-matching words
-word.count.df1<-word.count.df1[which(word.count.df1$word.count.v %in% word.count.df2$word.count.v),]
-word.count.df2<-word.count.df2[which(word.count.df2$word.count.v %in% word.count.df1$word.count.v),]
-
-#test to see if it worked. This line should produce "integer(0)" if not, try again!
-which(as.character(word.count.df1$word.count.v) != as.character(word.count.df2$word.count.v))
+#remove rows where at least one column is not > X (default = 50)
+collocate.all<-collocate.all[collocate.all$Freq.x > 49 | collocate.all$Freq.y > 49,]
 
 #first get individual word counts for each corpus
-word1<-word.count.df1$Freq
-word2<-word.count.df2$Freq
+word1<-collocate.all$Freq.x
+word2<-collocate.all$Freq.y
 
 #then get total counts for each corpus
 all1<-sum(word1)
@@ -157,7 +150,7 @@ all2<-sum(word2)
 H = function(k) {N = sum(k); return(sum(k/N*log(k/N+(k==0))))}
 
 #store empty results in a table
-results <- data.frame(word = word.count.df1$word.count.v, 
+results <- data.frame(word = collocate.all$collocate.v, 
                       group1=word1,
                       group2=word2,
                       G2 = 0,
