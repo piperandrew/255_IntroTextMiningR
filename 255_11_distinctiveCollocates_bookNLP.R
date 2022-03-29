@@ -36,9 +36,10 @@
 #you will run the following script TWICE by changing either the KEYWORD or the txt files DIRECTORY
 #notice at the end where you save your outputted list of words -- you need to create 2 variables, one for each run
 
-#set working directory to txt files location -- set to the directory where they are actually located
+#set working directory to bookNLP files location -- set to the directory where they are actually located
 #change this for second run if testing 2 collections
 setwd("~/Data/bookNLP_cont_CHILD_select")
+#setwd("~/Data/bookNLP_cont_ADULT_select") #example of comparison data
 
 #get list of files in target directory
 f.names<-list.files()
@@ -55,56 +56,45 @@ for (i in 1:length(f.names)){
   book.df<-rbind(book.df, a)
 }
 
-#define keyword for collocate analysis
+### define keyword for collocate analysis
 #this can either be a word or a word type or other type of data in bookNLP
 #this script uses the character gender annotation as an example
 #change this on second run if comparing two different keywords
+
 keyword<-c("male")
 #keyword<-c("female")
 
 #define window +/- (Default = 9)
 n<-9
 
+#create index of locations of keyword in the vector
+key.index<-which(book.df$gender == keyword) # position of keyword
+
 #create an empty vector where you will save your results
 collocate.v<-NULL
-#create a loop that is as long as the number of documents
-for (i in 1:length(f.names)){
-  #see how fast things are going
-  print(i)
-  #ingest and clean each text
-  work.v<-text.prep(f.names[i])
-  
-  #store all words to word count vector
-  #word.count.v<-append(word.count.v, work.v)
-  
-  #create index of locations of keyword in the vector
-  key.index<-which(work.v == keyword) # position of keyword
-  #only continue if the keyword is in the text
-  if (length(key.index) > 0){
-    #create empty table to store collocates for each work
-    #for every occurrence of keyword
-    for (j in 1:length(key.index)){
-      #make sure keyword is greater than window away from beginning or end of text
-      if (key.index[j]-n > 1 & key.index[j]+n < length(work.v)){
-        #get all words prior to and after keyword up to window
-        before<-work.v[(key.index[j]-n):(key.index[j]-1)]
-        after<-work.v[(key.index[j]+1):(key.index[j]+n)]
-        #combine
-        col<-c(before, after)
-        #store in a single vector
-        collocate.v<-append(collocate.v, col)
-      }
-    }
+
+#for every instance of keyword
+for (j in 1:length(key.index)){
+  #make sure keyword is greater than window away from beginning or end of text
+  if (key.index[j]-n > 1 & key.index[j]+n < length(work.v)){
+    #get all words prior to and after keyword up to window
+    before<-book.df$lemma[(key.index[j]-n):(key.index[j]-1)]
+    after<-book.df$lemma[(key.index[j]+1):(key.index[j]+n)]
+    #combine
+    col<-c(before, after)
+    #store in collocate vector
+    collocate.v<-append(collocate.v, col)
   }
 }
 
-#*****Create table of counts -- remember to adjust which line you run depending on first or second run!!!
+##### remember to adjust the following lines based on whether first or second run!!!
 
 #For your FIRST keyword/text collection
 collocate.df1<-data.frame(sort(table(collocate.v), decreasing = T))
 
 #For your SECOND keyword/text collection
 #collocate.df2<-data.frame(sort(table(collocate.v), decreasing = T))
+
 
 #####################      B. Identify Distinctive Collocates      ######################
 
