@@ -4,6 +4,7 @@
 
 ################################################################################
 ########################    Distinctive Collocates    ##########################
+########################        using bookNLP data    ##########################
 ################################################################################
 
 #A 'collocate' is a word that appears near another word ("co-located").
@@ -23,8 +24,8 @@
 ##############################     A. Collocate Builder    #################################
 
 #this script takes as input:
-#- a directory of .txt files
-#- a "keyword"
+#- a directory of bookNLP .tokens files (or .csv)
+#- a "keyword" (can also be a word type)
 #- a window size of +/- N words (default = 9)
 
 #it outputs a table of word counts associated with the keyword
@@ -35,37 +36,36 @@
 #you will run the following script TWICE by changing either the KEYWORD or the txt files DIRECTORY
 #notice at the end where you save your outputted list of words -- you need to create 2 variables, one for each run
 
-#text cleaning function: run this
-text.prep<-function(x){
-  #first scan in the document
-  work<-scan(x, what="character", quote="", quiet=T)
-  #remove numbers
-  work<-gsub("\\d", "", work)
-  #split on punctuation
-  work<-unlist(strsplit(work,"[[:punct:]]"))
-  #make all lowercase
-  work<-tolower(work)
-  #remove blanks
-  work<-work[work != ""]
-}
-
 #set working directory to txt files location -- set to the directory where they are actually located
 #change this for second run if testing 2 collections
-setwd("~/Data/gut_ChildrenStories")
-#setwd("~/Data/gut_AdultStories")
+setwd("~/Data/bookNLP_cont_CHILD_select")
 
 #get list of files in target directory
 f.names<-list.files()
 
-#define keyword
+#create loop to go through and ingest each file and turn into one large table
+book.df<-NULL
+for (i in 1:length(f.names)){
+  print(i)
+  #ingest the i-th file
+  a<-read.csv(f.names[i], sep="\t", quote = "", stringsAsFactors = F)
+  #add filename column
+  a$filename<-f.names[i]
+  #add to meta-table
+  book.df<-rbind(book.df, a)
+}
+
+#define keyword for collocate analysis
+#this can either be a word or a word type or other type of data in bookNLP
+#this script uses the character gender annotation as an example
 #change this on second run if comparing two different keywords
-keyword<-c("mother")
-#keyword<-c("father")
+keyword<-c("male")
+#keyword<-c("female")
 
 #define window +/- (Default = 9)
 n<-9
 
-#create an empty vector where you will save your collocates
+#create an empty vector where you will save your results
 collocate.v<-NULL
 #create a loop that is as long as the number of documents
 for (i in 1:length(f.names)){
@@ -73,6 +73,10 @@ for (i in 1:length(f.names)){
   print(i)
   #ingest and clean each text
   work.v<-text.prep(f.names[i])
+  
+  #store all words to word count vector
+  #word.count.v<-append(word.count.v, work.v)
+  
   #create index of locations of keyword in the vector
   key.index<-which(work.v == keyword) # position of keyword
   #only continue if the keyword is in the text
