@@ -59,8 +59,8 @@ f.names<-list.files()
 
 #define keyword
 #change this on second run if comparing two different keywords
-keyword<-c("mother")
-#keyword<-c("father")
+#keyword<-c("mother")
+keyword<-c("father")
 
 #define window +/- (Default = 9)
 n<-9
@@ -97,10 +97,10 @@ for (i in 1:length(f.names)){
 #*****Create table of counts -- remember to adjust which line you run depending on first or second run!!!
 
 #For your FIRST keyword/text collection
-collocate.df1<-data.frame(sort(table(collocate.v), decreasing = T))
+#collocate.df1<-data.frame(sort(table(collocate.v), decreasing = T))
 
 #For your SECOND keyword/text collection
-#collocate.df2<-data.frame(sort(table(collocate.v), decreasing = T))
+collocate.df2<-data.frame(sort(table(collocate.v), decreasing = T))
 
 #####################      B. Identify Distinctive Collocates      ######################
 

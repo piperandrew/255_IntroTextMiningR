@@ -50,10 +50,10 @@ for (i in 1:length(f.names)){
   print(i)
   
   #if tab separated
-  #a<-read.csv(f.names[i], sep="\t", quote = "", stringsAsFactors = F)
+  a<-read.csv(f.names[i], sep="\t", quote = "", stringsAsFactors = F)
   
   #if comma separated
-  a<-read.csv(f.names[i], stringsAsFactors = F)
+  #a<-read.csv(f.names[i], stringsAsFactors = F)
   
   #add filename column
   a$filename<-f.names[i]
