@@ -4,7 +4,7 @@
 
 ################################################################################
 ########################    Distinctive Collocates    ##########################
-########################        using bookNLP data    ##########################
+########################      using bookNLP data      ##########################
 ################################################################################
 
 #A 'collocate' is a word that appears near another word ("co-located").
@@ -38,7 +38,7 @@
 
 #set working directory to bookNLP files location -- set to the directory where they are actually located
 #change this for second run if testing 2 collections
-setwd("~/Data/bookNLP_cont_CHILD_select")
+setwd("~/Data/bookNLP_gut_juv")
 #setwd("~/Data/bookNLP_cont_ADULT_select") #example of comparison data
 
 #get list of files in target directory
@@ -50,16 +50,19 @@ for (i in 1:length(f.names)){
   print(i)
   
   #if tab separated
-  a<-read.csv(f.names[i], sep="\t", quote = "", stringsAsFactors = F)
+  #a<-read.csv(f.names[i], sep="\t", quote = "", stringsAsFactors = F)
   
   #if comma separated
-  #a<-read.csv(f.names[i], stringsAsFactors = F)
+  a<-read.csv(f.names[i], stringsAsFactors = F)
   
   #add filename column
   a$filename<-f.names[i]
   #add to meta-table
   book.df<-rbind(book.df, a)
 }
+
+#remove punctuation
+book.df<-book.df[-grep("[[:punct:]]", book.df$lemma),]
 
 ### define keyword for collocate analysis
 #this can either be a word or a word type or other type of data in bookNLP
@@ -73,25 +76,27 @@ keyword<-c("male")
 n<-9
 
 #create index of locations of keyword in the vector
+
+#EXAMPLE: This is to detect collocates of male/female identified characters
 key.index<-which(book.df$gender == keyword) # position of keyword
 
-#create an empty vector where you will save your results
-collocate.v<-NULL
+#EXAMPLE: This is to detect collocates of a keyword
+#key.index<-which(book.df$lemma == keyword) # position of keyword
 
-#for every instance of keyword
-for (j in 1:length(key.index)){
-  print(j)
-  #make sure keyword is greater than window away from beginning or end of text
-  if (key.index[j]-n > 1 & key.index[j]+n < nrow(book.df)){
-    #get all words prior to and after keyword up to window
-    before<-book.df$lemma[(key.index[j]-n):(key.index[j]-1)]
-    after<-book.df$lemma[(key.index[j]+1):(key.index[j]+n)]
-    #combine
-    col<-c(before, after)
-    #store in collocate vector
-    collocate.v<-append(collocate.v, col)
-  }
-}
+#Next get all words +/- of where the keywords are
+before<-sapply(key.index, function (x) seq(from=(x-10), to=(x-1), by=1))
+after<-sapply(key.index, function (x) seq(from=(x+1), to=(x+10), by=1))
+
+#combine and remove duplicates and keywords
+key.all<-append(before, after)
+key.all<-unique(key.all)
+key.all<-key.all[!key.all %in% key.index]
+
+#save as vector of words
+collocate.v<-book.df$lemma[key.all]
+
+#remove all words that are proper names
+collocate.v<-collocate.v[!collocate.v %in% book.df$lemma[book.df$ner == "PERSON"]]
 
 ##### remember to adjust the following lines based on whether first or second run!!!
 
