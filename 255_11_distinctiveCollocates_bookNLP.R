@@ -48,8 +48,13 @@ f.names<-list.files()
 book.df<-NULL
 for (i in 1:length(f.names)){
   print(i)
-  #ingest the i-th file
+  
+  #if tab separated
   a<-read.csv(f.names[i], sep="\t", quote = "", stringsAsFactors = F)
+  
+  #if comma separated
+  #a<-read.csv(f.names[i], stringsAsFactors = F)
+  
   #add filename column
   a$filename<-f.names[i]
   #add to meta-table
@@ -75,8 +80,9 @@ collocate.v<-NULL
 
 #for every instance of keyword
 for (j in 1:length(key.index)){
+  print(j)
   #make sure keyword is greater than window away from beginning or end of text
-  if (key.index[j]-n > 1 & key.index[j]+n < length(work.v)){
+  if (key.index[j]-n > 1 & key.index[j]+n < nrow(book.df)){
     #get all words prior to and after keyword up to window
     before<-book.df$lemma[(key.index[j]-n):(key.index[j]-1)]
     after<-book.df$lemma[(key.index[j]+1):(key.index[j]+n)]
