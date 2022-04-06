@@ -38,7 +38,7 @@
 
 #set working directory to bookNLP files location -- set to the directory where they are actually located
 #change this for second run if testing 2 collections
-setwd("~/Data/bookNLP_gut_juv")
+setwd("~/Data/Hp1")
 #setwd("~/Data/bookNLP_cont_ADULT_select") #example of comparison data
 
 #get list of files in target directory
@@ -72,6 +72,9 @@ book.df<-book.df[-grep("[[:punct:]]", book.df$lemma),]
 keyword<-c("male")
 #keyword<-c("female")
 
+#if looking at a specific character use this
+#keyword<-55
+
 #define window +/- (Default = 9)
 n<-9
 
@@ -82,6 +85,9 @@ key.index<-which(book.df$gender == keyword) # position of keyword
 
 #EXAMPLE: This is to detect collocates of a keyword
 #key.index<-which(book.df$lemma == keyword) # position of keyword
+
+#EXAMPLE: This is to detect collocates of a characterID
+#key.index<-which(book.df$characterId == keyword) # position of keyword
 
 #Next get all words +/- of where the keywords are
 before<-sapply(key.index, function (x) seq(from=(x-10), to=(x-1), by=1))
@@ -101,10 +107,10 @@ collocate.v<-collocate.v[!collocate.v %in% book.df$lemma[book.df$ner == "PERSON"
 ##### remember to adjust the following lines based on whether first or second run!!!
 
 #For your FIRST keyword/text collection
-collocate.df1<-data.frame(sort(table(collocate.v), decreasing = T))
+#collocate.df1<-data.frame(sort(table(collocate.v), decreasing = T))
 
 #For your SECOND keyword/text collection
-#collocate.df2<-data.frame(sort(table(collocate.v), decreasing = T))
+collocate.df2<-data.frame(sort(table(collocate.v), decreasing = T))
 
 
 #####################      B. Identify Distinctive Collocates      ######################
