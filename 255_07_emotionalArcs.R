@@ -57,7 +57,7 @@ chunks<-floor((length(work)-n)/n)
 emotion.df<-NULL
 
 #create loop to slide through MS by "n"-sized chunks
-for (i in 0:(chunks-1)){
+for (i in 0:(chunks)){
   
   #subset the work by window size starting at the i-th chunk and moving forward by n 
   sub<-work[((i*n)+1):((i*n)+n)]
@@ -139,7 +139,7 @@ emotion.sub<-emotion.df[which(emotion.df$type %in% emotion.dimension),]
 #for long stories: #very general = .3 #medium = .2 #specific = .1
 #for short stories: #very general =.75 #medium = .5 #specific = .3
 
-specificity<-.3
+specificity<-.75
 
 #plot
 ggplot(emotion.sub, aes(x=word, y=norm, color = type)) +

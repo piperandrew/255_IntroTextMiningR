@@ -38,8 +38,8 @@
 
 #set working directory to bookNLP files location -- set to the directory where they are actually located
 #change this for second run if testing 2 collections
-setwd("~/Data/Hp1")
-#setwd("~/Data/bookNLP_cont_ADULT_select") #example of comparison data
+setwd("~/Data/bookNLP_gut_child_select")
+#setwd("~/Data/bookNLP_cont_ADULT") #example of comparison data
 
 #get list of files in target directory
 f.names<-list.files()
@@ -69,8 +69,9 @@ book.df<-book.df[-grep("[[:punct:]]", book.df$lemma),]
 #this script uses the character gender annotation as an example
 #change this on second run if comparing two different keywords
 
-keyword<-c("male")
+#keyword<-c("male")
 #keyword<-c("female")
+keyword<-c("love")
 
 #if looking at a specific character use this
 #keyword<-55
@@ -203,5 +204,39 @@ results<-results[order(-results$G2_Sorted),]
 write.csv(results, file="MyResults.csv", row.names = F)
 
 
+######## Inspect Target Collocates ############
+#let's say you're interested in better understanding the contexts in which certain collocates occur
+#in other words, given distinctive collocates what are they telling us?
+#one way to answer that is to look at sentences where both your keyword and collocate are present
+#and assess their meaning. (You can see the problem of infinite regress: run collocat analysis on distinctive collocates!)
+
+#first choose a given collocate & keyword
+col.key<-c("love")
+keyword<-c("mother")
+
+#subset your bookNLP table by all *sentences* that have *both* your keyword and your collocate
+sent1<-book.df[book.df$lemma == keyword,]
+sent2<-book.df[book.df$lemma == col.key,]
+
+#get list of works that contain these sentences
+sent3<-unique(append(sent1$filename, sent2$filename))
+
+#subset by these books
+book.sub<-book.df[book.df$filename %in% sent3,]
+
+#now for each book subset by sentences with both collocate and keyword
+#this table gives you sentences that contain both the keyword and target collocate to inspect
+inspect.df<-NULL
+for(i in 1:nlevels(factor(book.sub$filename))){
+  #subset by i book
+  sub<-book.sub[book.sub$filename == levels(factor(book.sub$filename))[i],]
+  #subset sentences by keyword and collocate
+  sent1.v<-sub$sentenceID[sub$lemma == keyword]
+  sent2.v<-sub$sentenceID[sub$lemma == col.key]
+  sent.v<-sent1.v[sent1.v %in% sent2.v]
+  #save sentence as table
+  temp.df<-sub[sub$sentenceID %in% sent.v,]
+  inspect.df<-rbind(inspect.df, temp.df)
+}
 
 

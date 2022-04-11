@@ -5,6 +5,8 @@
 ######### Emotion Analysis  ##################
 #in this script you can observe the distribution of different emotion vocabulary across corpora
 #it reuses the "Corpus Comparison - Part 1" scripts
+#the emotion lexicon is located here:
+#https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm
 
 ### Datasets used here:
 #NOVEL_English_19C. https://doi.org/10.6084/m9.figshare.17430485.v1
