@@ -33,7 +33,6 @@ f<-content_transformer(function(x, pattern) gsub(pattern, " ", x))
 corpus1 <- tm_map(corpus1, f, "[[:punct:]]")
 corpus1 <- tm_map(corpus1, content_transformer(stripWhitespace))
 corpus1.dtm<-DocumentTermMatrix(corpus1, control=list(wordLengths=c(1,Inf))) #(1,Inf) refers to the range of word lengths kept
-dtm1.scaled<-corpus1.dtm/row_sums(corpus1.dtm)
 
 #because there are an unknown number of stop and stop-like words (such as proper names in Fiction)
 #we recommend that you only keep words based on a custom dictionary that has been manually reviewed
