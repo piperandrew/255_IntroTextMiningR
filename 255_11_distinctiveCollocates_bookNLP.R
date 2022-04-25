@@ -98,6 +98,7 @@ after<-sapply(key.index, function (x) seq(from=(x+1), to=(x+10), by=1))
 key.all<-append(before, after)
 key.all<-unique(key.all)
 key.all<-key.all[!key.all %in% key.index]
+key.all<-key.all[key.all > 0]
 
 #save as vector of words
 collocate.v<-book.df$lemma[key.all]
@@ -138,6 +139,8 @@ collocate.df1<-collocate.df1[order(collocate.df1$collocate.v),]
 collocate.df2<-collocate.df2[order(collocate.df2$collocate.v),]
 
 #merge
+colnames(collocate.df1)<-c("collocate.v", "Freq")
+colnames(collocate.df2)<-c("collocate.v", "Freq")
 collocate.all<-merge(collocate.df1, collocate.df2, by="collocate.v", all = T)
 collocate.all[is.na(collocate.all)]<-0
 
