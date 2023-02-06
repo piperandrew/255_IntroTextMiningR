@@ -1,6 +1,6 @@
 ######### LLCU 255 Introduction to Literary Text Mining ##########
-######### by Andrew Piper ####################
-######### CC By 4.0 License ##################
+######### by Andrew Piper   ######################################
+######### CC By 4.0 License ######################################
 
 #####################################################
 ##############   Preparing your data    #############
@@ -21,7 +21,7 @@ library("slam")
 
 #Set your working directory
 #this is the folder *above* where your texts are located
-setwd("~/Data")
+setwd("/Users/akpiper/Data")
 
 ########  Reading in Your Data: the TM Library   ###########
 
@@ -91,7 +91,6 @@ dtm.example<-as.matrix(corpus1.dtm[ ,which(colnames(corpus1.dtm) %in% stopwords(
 #the first method does so by adjusting frequencies according to the
 #document lengths; the second does so by adjusting word frequencies by
 #their document frequency (i.e. in how many documents they appear)
-#see the book for further explanation
 
 #Method 1: Scaling
 #divide the counts by the total number of words in each document.
@@ -105,7 +104,6 @@ dtm.tfidf<-weightTfIdf(corpus1.dtm, normalize = TRUE)
 
 ##### Now inspect your DTM #####
 dtm.example.scaled<-as.matrix(dtm.example/row_sums(corpus1.dtm))
-
 
 ############################################################################
 ######## Beginning to understand your data: some initial metrics ###########

@@ -1,6 +1,6 @@
 ######### LLCU 255 Introduction to Literary Text Mining ##########
-######### by Andrew Piper ####################
-######### CC By 4.0 License ##################
+######### by Andrew Piper ########################################
+######### CC By 4.0 License ######################################
 
 ################################################################
 ################     Feature Selection       ###################
@@ -147,7 +147,6 @@ sort(col_means(dtm.sparse), decreasing = T)[(length(colnames(dtm.sparse))-4):len
 #if you want to visualize this as a table
 dtm<-as.matrix(dtm.sparse)
 dtm.sparse<-as.matrix(dtm.sparse)
-
 
 #you're good to go!
 
