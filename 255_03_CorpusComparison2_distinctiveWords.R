@@ -96,8 +96,8 @@ keep<-intersect(colnames(corpus1.sparse), colnames(corpus2.sparse))
 
 #subset 1 and 2 by these words
 #this is your DTM1 and DTM2
-dtm1<-corpus1.dtm[,colnames(corpus1.sparse) %in% keep]
-dtm2<-corpus2.dtm[,colnames(corpus2.sparse) %in% keep]
+dtm1<-corpus1.sparse[,colnames(corpus1.sparse) %in% keep]
+dtm2<-corpus2.sparse[,colnames(corpus2.sparse) %in% keep]
 
 #first get individual word counts for each corpus
 word1<-col_sums(dtm1)
