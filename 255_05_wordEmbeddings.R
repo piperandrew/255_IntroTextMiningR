@@ -6,6 +6,8 @@
 #20C_Poetry_WordEmbeddings_English. https://doi.org/10.6084/m9.figshare.17435000.v1 
 #NYTimes_Novels_WordEmbeddings. https://doi.org/10.6084/m9.figshare.17435054.v1 
 
+setwd("~/Data")
+
 #####  Method 1 ######
 library(word2vec)
 
@@ -20,7 +22,10 @@ nyt<-word2vec("NYT.txt", type = "cbow", window=5, threads=3, dim=50, min_count=1
 #save model
 write.word2vec(nyt, "NYT.bin", type = "bin")
 
+#### if you already have a model or have downloaded one START HERE ###
+
 #read model
+#if the model is .txt file see below
 model1<-read.word2vec("20CPOetryAll.bin", normalize = T) #normalize = T!!!
 model2<-read.word2vec("NYT_Model.bin", normalize = T) #normalize = T!!!
 
@@ -54,30 +59,18 @@ word2vec_similarity(emb2["human", ], emb2["nature", ], top_n = 1)
 vector <- emb1["king", ] - emb1["man", ] + emb1["woman", ]
 predict(model1, vector, type = "nearest", top_n = 10)
 
+#### If the model is a .txt file START HERE #####
 
-
-###### Method 2 ######
-#Especially useful if models are .txt
-#Also a function for exporting data
-
-library("devtools")
-library(magrittr)
-library(wordVectors)
-devtools::install_github("bmschmidt/wordVectors")
-remotes::install_github("bmschmidt/wordVectors", ref="lite")
-
-#export directory of txt files as a single txt file to build model
-#first value is directory, second is output file
-prep_word2vec("Novel_English_19C","Novel_English_19C.txt",lowercase=T) 
-
-#import .txt model
 #sample from https://nlp.stanford.edu/projects/glove/
-model<-read.vectors("glove.6B.50d.txt")
+#read model
+emb1 <- read.csv("glove.6B.50d.txt", sep=" ", quote="", header=F)
+row.names(emb1)<-emb1[,1]
+emb1<-as.matrix(emb1[,-1])
 
-#find nearst words
-nearest_to(model, model[[c("frog")]], 10)
-nearest_to(model, model[[c("frog", "frogs")]], 10)
-nearest_to(model, model[["king"]]-model[["man"]]+model[["woman"]], 10)
-cosineSimilarity(model[["rock"]], model[["boulder"]])
-cosineSimilarity(model[[c("rock", "rocks")]], model[["lamp"]])
+#find nearest N words to target word
+word2vec_similarity(emb1["human", ], emb1, top_n = 10, type="cosine")
+
+#find nearest N words to target vector
+vector <- emb1["king", ] - emb1["man", ] + emb1["woman", ]
+word2vec_similarity(vector, emb1, top_n = 10, type="cosine")
 
