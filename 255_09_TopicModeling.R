@@ -13,10 +13,6 @@
 #or for understanding the kinds of topics and their semantic identity that are present in your documents
 #at the end you will run a distinctive topics test similar to your feature comparison code
 
-#you can bypass Steps 1 & 2 by loading the prebuilt topic modeling workspace "txtlab_Novel150_English_TopicModel_k50.RData"
-#you do this by going to Session->Load Workspace and choosing the above file.
-#then jump to section "Step 4: Explore your model" (ca. line 91)
-
 library("tm")
 library("proxy")
 library("stats")
@@ -24,7 +20,7 @@ library("topicmodels")
 library("slam")
 
 ###### Step 0: Load Workspace #######
-#if you have already run Steps 1 & 2 below, then you can just load up your saved workspace
+#if you have already run Steps 1,2,3 below, then you can just load up your saved workspace and go to Step 4
 load("")
 
 ###### Step 1: Create DTM ######
