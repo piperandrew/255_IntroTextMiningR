@@ -23,6 +23,10 @@ library("stats")
 library("topicmodels")
 library("slam")
 
+###### Step 0: Load Workspace #######
+#if you have already run Steps 1 & 2 below, then you can just load up your saved workspace
+load("")
+
 ###### Step 1: Create DTM ######
 
 setwd("")
@@ -191,7 +195,7 @@ term_dis[,as.numeric(names(prob_sample_sort))[1]]
 ########   WHAT ARE THE DOCUMENTS ASSOCIATED WITH A PARTICULAR TOPIC  ########
 
 #first, define your topic
-topic.no<-13
+topic.no<-7
 
 #subset all documents by that topic
 prob_sample<-topic_doc_probs[,topic.no]
@@ -214,7 +218,7 @@ top.docs<-topic_doc_probs[row.names(topic_doc_probs)[which(topic_doc_probs[,topi
 #this orders the table from highest to lowest - change the integer to the desired topic number
 #with this information you can now go back to the original documents and read them and see how well that
 #topic is actually represented
-top.docs<-top.docs[order(-top.docs$`13`),]
+top.docs<-top.docs[order(-top.docs$`7`),]
 
 
 
@@ -235,7 +239,7 @@ top.docs<-top.docs[order(-top.docs$`13`),]
 
 #load metadata
 setwd("")
-meta<-read.csv("TopicModel_NYT_FanFic_Meta.csv")
+meta<-read.csv("META_TopicModel_NYT_FanFic.csv")
 
 #separate the topic probability table by metadata
 group1<-topic_doc_probs[row.names(topic_doc_probs) %in% meta$Filename[meta$Class == "FAN"],]
@@ -268,7 +272,7 @@ ggplot(distinctive.df, aes(y=reorder(topic.no, -median.diff), x=median.diff)) +
   geom_vline(xintercept=0) +
   xlab("Difference in Median Probability") +
   ylab("Topic Number") +
-  labs(title="Distinctive Topics", subtitle = "Queer Fanfic and NYTimes Fiction")
+  labs(title="Distinctive Topics", subtitle = "Queer Fanfic (left) and NYTimes Fiction (right)")
 
 
 
