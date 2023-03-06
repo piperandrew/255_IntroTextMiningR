@@ -253,22 +253,22 @@ for (i in 1:ncol(topic_doc_probs)){
   median1<-median(group1[,i])
   median2<-median(group2[,i])
   median.ratio<-median(group1[,i])/median(group2[,i])
-  median.diff.abs<-abs(median(group1[,i])-median(group2[,i]))
   median.diff<-median(group1[,i])-median(group2[,i])
+  mean.diff<-mean(group1[,i])-mean(group2[,i])
   topic.no<-i
-  temp.df<-data.frame(topic.no, median1, median2, median.ratio, median.diff, p)
+  temp.df<-data.frame(topic.no, median1, median2, median.ratio, median.diff, mean.diff, p)
   distinctive.df<-rbind(distinctive.df, temp.df)
 }
 
 #plot results
 library(ggplot2)
-ggplot(distinctive.df, aes(y=reorder(topic.no, -median.diff), x=median.diff)) +
+ggplot(distinctive.df, aes(y=reorder(topic.no, -mean.diff), x=mean.diff)) +
   geom_point() +
   theme_classic() +
   geom_vline(xintercept=0) +
-  xlab("Difference in Median Probability") +
+  xlab("Difference in Mean Probability") +
   ylab("Topic Number") +
-  labs(title="Distinctive Topics", subtitle = "Queer Fanfic (left) and NYTimes Fiction (right)")
+  labs(title="Distinctive Topics", subtitle = "NYTimes Fiction (left) and Queer Fanfic (right)")
 
 
 
