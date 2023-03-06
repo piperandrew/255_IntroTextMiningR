@@ -246,17 +246,22 @@ group2<-topic_doc_probs[row.names(topic_doc_probs) %in% meta$Filename[meta$Class
 
 #create a loop that goes through each column and compares the median probability of the topic
 #in group 1 v. group 2 and store in a table
+#you can toggle mean v. median topic probabilities
 distinctive.df<-NULL
 for (i in 1:ncol(topic_doc_probs)){
   model<-wilcox.test(group1[,i], group2[,i])
   p<-model$p.value
-  median1<-median(group1[,i])
-  median2<-median(group2[,i])
-  median.ratio<-median(group1[,i])/median(group2[,i])
-  median.diff<-median(group1[,i])-median(group2[,i])
+  #median1<-median(group1[,i])
+  #median2<-median(group2[,i])
+  #median.ratio<-median(group1[,i])/median(group2[,i])
+  #median.diff<-median(group1[,i])-median(group2[,i])
+  mean1<-mean(group1[,i])
+  mean2<-mean(group2[,i])
+  mean.ratio<-mean(group1[,i])/mean(group2[,i])
   mean.diff<-mean(group1[,i])-mean(group2[,i])
   topic.no<-i
-  temp.df<-data.frame(topic.no, median1, median2, median.ratio, median.diff, mean.diff, p)
+  #temp.df<-data.frame(topic.no, median1, median2, median.ratio, median.diff, mean.diff, p)
+  temp.df<-data.frame(topic.no, mean1, mean2, mean.ratio, mean.diff, p)
   distinctive.df<-rbind(distinctive.df, temp.df)
 }
 
