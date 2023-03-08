@@ -182,10 +182,10 @@ plot(t(prob_sample_sort), main = title.d, xlab="Topic Ranks", ylab="Probability"
 prob_sample_sort[1:5]
 
 #refer to your topic-word table to see the words associated with a given top topic
-#this shows the words associated with the top Nth topic -- chang the integer in brackets
+#this shows the words associated with the top Nth topic -- change the integer in brackets
 #to get the top 1,2,3,4th topic etc for this document.
 #output are the top 20 words associated with that topic
-term_dis[,as.numeric(names(prob_sample_sort))[1]]
+term_dis[,as.numeric(names(prob_sample_sort))[3]]
 
 
 ########   WHAT ARE THE DOCUMENTS ASSOCIATED WITH A PARTICULAR TOPIC  ########

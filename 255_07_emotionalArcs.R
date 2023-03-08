@@ -185,7 +185,7 @@ ggplot(emotion.sub, aes(x=word, y=norm, fill = type)) +
 type<-c("valence")
 #type<-c("arousal")
 
-#find top 10 high  / low points
+#find top 5 high  / low points
 top.df<-emotion.df[emotion.df$type == type,]
 top.df<-top.df[order(-top.df$norm),]
 top.df[1:5,]
