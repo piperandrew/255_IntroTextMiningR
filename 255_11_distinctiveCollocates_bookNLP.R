@@ -69,8 +69,8 @@ book.df<-book.df[-grep("[[:punct:]]", book.df$lemma),]
 #this script uses the character gender annotation as an example
 #change this on second run if comparing two different keywords
 
-#keyword<-c("male")
-#keyword<-c("female")
+#keyword<-c("he")
+#keyword<-c("she")
 keyword<-c("love")
 
 #if looking at a specific character use this
