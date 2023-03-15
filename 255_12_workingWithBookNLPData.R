@@ -8,7 +8,7 @@
 ################################################################################
 
 #this script works with the .tokens output from the original version of bookNLP (https://github.com/dbamman/book-nlp)
-#it does not work with the updated version (https://github.com/booknlp/booknlp)
+#it does NOT work with the updated version (https://github.com/booknlp/booknlp)
 
 ##### In this script you can:
 #A. Measure the average sentence length for every document in a corpus
@@ -18,12 +18,41 @@
 
 #Each of these scripts assumes you have two comparison corpora
 
-#set your working directory: this is where your directories of bookNLP files are stored 
-setwd("/Users/akpiper/Data")
-
 ######## A & B. Comparing Sentence and Word Length ###########
 #for this exercise you are going to look at two different corpora of texts
 #and compare their sentence and word lengths
+
+#create a function that calculate mean sentence and word length for every bookNLP table
+process_difficulty <- function(file_list) {
+  
+  # create an empty final table
+  df <- NULL
+  
+  # iterate over the list of filenames
+  for (i in 1:length(file_list)) {
+    
+    # ingest table
+    a <- read.csv(file_list[i], sep="\t", quote = "")
+    
+    # measure mean sentence length
+    sent.length <- mean(table(a$sentenceID))
+    
+    # measure mean word length
+    word.length <- mean(nchar(a$originalWord))
+    
+    # save filename
+    fileID <- file_list[i]
+    
+    # store in table
+    temp.df <- data.frame(fileID, sent.length, word.length)
+    df <- rbind(df, temp.df)
+  }
+  
+  return(df)
+}
+
+#set your working directory: this is where your directories of bookNLP files are stored 
+setwd("/Users/akpiper/Data")
 
 #get filenames Corpus 1
 file.n1<-list.files("bookNLP_gut_child")
@@ -31,185 +60,106 @@ file.n1<-list.files("bookNLP_gut_child")
 #get filenames for Corpus 2
 file.n2<-list.files("bookNLP_gut_folk")
 
-#create a loop to go through each file and ingest the bookNLP table
+#run function for each list of tables
 
-#### CORPUS 1 ####
-
-#change your working directory to Corpus 1
+#change WD for each filelist
 setwd("/Users/akpiper/Data/bookNLP_gut_child")
-
-#create empty final table
-corpus1.df<-NULL
-
-#run loop
-for (i in 1:length(file.n1)){
-  print(i)
-  
-  #ingest bookNLP table
-  a<-read.csv(file.n1[i], sep="\t", quote = "")
-  
-  #measure mean sentence length
-  sent.length<-mean(table(a$sentenceID))
-  
-  #measure mean word length
-  word.length<-mean(nchar(a$originalWord))
-  
-  #save filename
-  fileID<-file.n1[i]
-  
-  #store in table
-  temp.df<-data.frame(fileID, sent.length, word.length)
-  corpus1.df<-rbind(corpus1.df, temp.df)
-}
-
-#### CORPUS 2 #####
-
+length.df1 <- process_difficulty(file.n1)
 setwd("/Users/akpiper/Data/bookNLP_gut_folk")
-#create empty final table
-corpus2.df<-NULL
-#run loop
-for (i in 1:length(file.n2)){
-  print(i)
-  #ingest bookNLP table
-  a<-read.csv(file.n2[i], sep="\t", quote = "")
-  #measure mean sentence length
-  sent.length<-mean(table(a$sentenceID))
-  #measure mean word length
-  word.length<-mean(nchar(a$originalWord))
-  #save filename
-  fileID<-file.n2[i]
-  #store in table
-  temp.df<-data.frame(fileID, sent.length, word.length)
-  corpus2.df<-rbind(corpus2.df, temp.df)
-}
+length.df2 <- process_difficulty(file.n2)
 
 #compare the two corpora using our standard methods of t.test or wilcox.test
-hist(corpus1.df$sent.length)
-hist(corpus2.df$sent.length)
-shapiro.test(corpus1.df$sent.length)
-shapiro.test(corpus2.df$sent.length)
-boxplot(corpus1.df$sent.length, corpus2.df$sent.length)
-t.test(corpus1.df$sent.length, corpus2.df$sent.length)
-wilcox.test(corpus1.df$sent.length, corpus2.df$sent.length)
-median(corpus1.df$sent.length)
-median(corpus2.df$sent.length)
+hist(length.df1$sent.length)
+hist(length.df2$sent.length)
+shapiro.test(length.df1$sent.length)
+shapiro.test(length.df2$sent.length)
+boxplot(length.df1$sent.length, length.df2$sent.length)
+t.test(length.df1$sent.length, length.df2$sent.length)
+wilcox.test(length.df1$sent.length, length.df2$sent.length)
+median(length.df1$sent.length)
+median(length.df2$sent.length)
 
 
 ########## C. Find distinctive place names ##########
 #Place names are discoverable using the NER "location" tag
 #As you will see it is not 100% accurate so for any application review your errors
 
-setwd("/Users/akpiper/Data")
+#create a function to go through each file and store place names in a vector
 
+process_placeNames <- function(file_list) {
+  
+  # create an empty final vector
+  place.v <- vector()
+  
+  # iterate over the list of filenames
+  for (i in 1:length(file_list)) {
+    
+    # ingest bookNLP table
+    a <- read.csv(file_list[i], sep="\t", quote = "")
+    
+    # subset by locations
+    a.place <- a[a$ner == "LOCATION",]
+    
+    # if there are placenames
+    if (nrow(a.place) > 1){
+      
+      # concatenate multi-word places
+      bi.v <- vector()
+      remove.v <- vector()
+      
+      for (j in 1:(nrow(a.place)-1)){
+        if (a.place$tokenId[j]+1 == a.place$tokenId[j+1]){
+          bi.v <- append(bi.v, paste(a.place$originalWord[j], a.place$originalWord[j+1], sep = " ", collapse = " "))
+          v <- c(a.place$tokenId[j], a.place$tokenId[j+1])
+          remove.v <- append(remove.v, v)
+        }
+      }
+      
+      # remove those tokens from the place table
+      a.place <- a.place[!a.place$tokenId %in% remove.v,]
+      
+      # then extract single word places
+      one.v <- a.place$originalWord
+      
+      # combine into single vector
+      place.temp <- append(bi.v, one.v)
+      
+      # combine into meta-vector
+      place.v <- append(place.v, place.temp)
+    }
+  }
+  return(place.v)
+}
+
+#get filenames
+setwd("/Users/akpiper/Data")
 #get filenames Corpus 1
 file.n1<-list.files("bookNLP_gut_child")
-
 #get filenames for Corpus 2
 file.n2<-list.files("bookNLP_gut_folk")
 
-#create a loop to go through each file and ingest the bookNLP table
-
-#### CORPUS 1 ####
-
+#output table
 #change your working directory to Corpus 1
 setwd("/Users/akpiper/Data/bookNLP_gut_child")
+place.df1<-process_placeNames(file.n1)
 
-#create empty final vector
-place.final.v1<-vector()
-
-#run loop
-for (i in 1:length(file.n1)){
-  print(i)
-  
-  #ingest bookNLP table
-  a<-read.csv(file.n1[i], sep="\t", quote = "")
-  
-  #subset by locations
-  a.place<-a[a$ner == "LOCATION",]
-  
-  #if there are placenames
-  if (nrow(a.place) > 1){
-  #concatenate multi-word places
-  bi.v<-vector()
-  remove.v<-vector()
-  for (j in 1:(nrow(a.place)-1)){
-    if (a.place$tokenId[j]+1 == a.place$tokenId[j+1]){
-      bi.v<-append(bi.v,paste(a.place$originalWord[j],a.place$originalWord[j+1], sep=" ", collapse = " "))
-      v<-c(a.place$tokenId[j],a.place$tokenId[j+1])
-      remove.v<-append(remove.v, v)
-    }
-  }
-  
-  #remove those tokens from the place table
-  a.place<-a.place[!a.place$tokenId %in% remove.v,]
-
-  #then extract single word places
-  one.v<-a.place$originalWord
-  
-  #combine into single vector
-  place.v<-append(bi.v, one.v)
-  
-  #combine into meta-vector
-  place.final.v1<-append(place.final.v1, place.v)
-  }
-}
-
-#### CORPUS 2 #####
-
-#change your working directory to Corpus 1
+#change your working directory to Corpus 2
 setwd("/Users/akpiper/Data/bookNLP_gut_folk")
-
-#create empty final vector
-place.final.v2<-vector()
-
-#run loop
-for (i in 1:length(file.n2)){
-  print(i)
-  
-  #ingest bookNLP table
-  a<-read.csv(file.n2[i], sep="\t", quote = "")
-  
-  #subset by locations
-  a.place<-a[a$ner == "LOCATION",]
-  
-  #if there are placenames
-  if (nrow(a.place) > 1){
-    #concatenate multi-word places
-    bi.v<-vector()
-    remove.v<-vector()
-    for (j in 1:(nrow(a.place)-1)){
-      if (a.place$tokenId[j]+1 == a.place$tokenId[j+1]){
-        bi.v<-append(bi.v,paste(a.place$originalWord[j],a.place$originalWord[j+1], sep=" ", collapse = " "))
-        v<-c(a.place$tokenId[j],a.place$tokenId[j+1])
-        remove.v<-append(remove.v, v)
-      }
-    }
-    
-    #remove those tokens from the place table
-    a.place<-a.place[!a.place$tokenId %in% remove.v,]
-    
-    #then extract single word places
-    one.v<-a.place$originalWord
-    
-    #combine into single vector
-    place.v<-append(bi.v, one.v)
-    
-    #combine into meta-vector
-    place.final.v2<-append(place.final.v2, place.v)
-  }
-}
+place.df2<-process_placeNames(file.n2)
 
 #Tally each of the list of place names for each corpus
-df1<-data.frame(table(place.final.v1))
-df2<-data.frame(table(place.final.v2))
+df1<-data.frame(table(place.df1))
+df2<-data.frame(table(place.df2))
 
-#run a distinctive words test to compare place names
+### run a distinctive words test to compare place names ###
+
+#find intersecting words between the two datasets
 keep<-intersect(as.character(df1[,1]), as.character(df2[,1]))
 
 #subset 1 and 2 by these words
 #this is your DTM1 and DTM2
-dtm1<-df1[df1$place.final.v1 %in% keep,]
-dtm2<-df2[df2$place.final.v2 %in% keep,]
+dtm1<-df1[df1$place.df1 %in% keep,]
+dtm2<-df2[df2$place.df2 %in% keep,]
 
 #first get individual word counts for each corpus
 word1<-dtm1$Freq
@@ -222,7 +172,7 @@ all2<-sum(word2)
 H = function(k) {N = sum(k); return(sum(k/N*log(k/N+(k==0))))}
 
 #store empty results in a table
-results <- data.frame(word = dtm1$place.final.v1, 
+results <- data.frame(word = dtm1$place.df1, 
                       group1=word1,
                       group2=word2,
                       G2 = 0,
@@ -270,41 +220,48 @@ results<-results[order(-results$G2_Sorted),]
 ########## D. Find distinctive parts of speech ##########
 #Parts of speech are discoverable using the "pos" column
 
-setwd("/Users/akpiper/Data")
+#create a function to go through each file and store POS counts
 
+process_pos <- function(file_list) {
+  
+  # create an empty final table
+  pos.df <- NULL
+  
+  # iterate over the list of filenames
+  for (i in 1:length(file_list)) {
+    
+    # ingest bookNLP table
+    a <- read.csv(file_list[i], sep="\t", quote = "")
+    
+    # table the POS tags
+    df <- data.frame(table(a$pos))
+    
+    # merge with meta table
+    if (length(pos.df) > 0) {
+      pos.df <- merge(pos.df, df, by = "Var1", all = TRUE)
+    } else {
+      pos.df <- df
+    } 
+  }
+  
+  return(pos.df)
+}
+
+#get filenames
+setwd("/Users/akpiper/Data")
 #get filenames Corpus 1
 file.n1<-list.files("bookNLP_gut_child")
-
 #get filenames for Corpus 2
 file.n2<-list.files("bookNLP_gut_folk")
 
-#create a loop to go through each file and ingest the bookNLP table
-
-#### CORPUS 1 ####
-
-#change your working directory to Corpus 1
+#output table
+#change your working directory to Corpus 1 and run function
 setwd("/Users/akpiper/Data/bookNLP_gut_child")
+pos.df1<-process_pos(file.n1)
 
-#create empty final vector
-pos.df1<-NULL
-
-#run loop
-for (i in 1:length(file.n1)){
-  print(i)
-  
-  #ingest bookNLP table
-  a<-read.csv(file.n1[i], sep="\t", quote = "")
-  
-  #table the POS tags
-  df<-data.frame(table(a$pos))
-
-  #merge with meta table
-  if (length(pos.df1) > 0){
-    pos.df1<-merge(pos.df1, df, by="Var1", all=T)
-  } else {
-    pos.df1<-df
-  } 
-}
+#change your working directory to Corpus 2 and run function
+setwd("/Users/akpiper/Data/bookNLP_gut_folk")
+pos.df2<-process_pos(file.n2)
 
 #sum values into single table
 row.names(pos.df1)<-pos.df1$Var1
@@ -312,32 +269,6 @@ pos.df1<-pos.df1[,-1]
 sum.v<-rowSums(pos.df1, na.rm = T)
 pos.df1<-data.frame(row.names(pos.df1), sum.v)
 colnames(pos.df1)<-c("pos", "freq")
-
-#### CORPUS 2 ####
-
-#change your working directory to Corpus 1
-setwd("/Users/akpiper/Data/bookNLP_gut_folk")
-
-#create empty final vector
-pos.df2<-NULL
-
-#run loop
-for (i in 1:length(file.n2)){
-  print(i)
-  
-  #ingest bookNLP table
-  a<-read.csv(file.n2[i], sep="\t", quote = "")
-  
-  #table the POS tags
-  df<-data.frame(table(a$pos))
-  
-  #merge with meta table
-  if (length(pos.df2) > 0){
-    pos.df2<-merge(pos.df2, df, by="Var1", all=T)
-  } else {
-    pos.df2<-df
-  } 
-}
 
 #sum values into single table
 row.names(pos.df2)<-pos.df2$Var1
