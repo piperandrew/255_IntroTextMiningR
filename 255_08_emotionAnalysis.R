@@ -46,7 +46,7 @@ emolex<-read.csv("NRC-Emotion-Lexicon-Wordlevel-v0.92.txt", sep="\t", header=F)
 levels(factor(emolex$V2))
 
 #choose an emotion to subset your DTM by
-dic<-emolex[emolex$V2 == "positive",]
+dic<-emolex[emolex$V2 == "joy",]
 #to select two or more
 dic<-emolex[emolex$V2 == "positive" | emolex$V2 == "negative",]
 #to select two or more

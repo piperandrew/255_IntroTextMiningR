@@ -28,10 +28,11 @@ setwd("/Users/akpiper/Data")
 #Read in your corpus
 #the name in "" after DirSource is the name of your folder where your texts are
 #set the language appropriately
-corpus1 <- VCorpus(DirSource("txtlab_Novel150_English", encoding = "UTF-8"), readerControl=list(language="English"))
+test<-read.csv("reddit_2020-09-27.csv")
+corpus1 <- VCorpus(VectorSource(test$Text), readerControl=list(language="English"))
 
 #Inspect your data (see a portion of the actual text)
-strwrap(corpus1[[26]])[1:5] #the second number in brackets 1:5 refers to the first five lines
+strwrap(corpus1[[6]]) #the second number in brackets 1:5 refers to the first five lines
 
 
 ########## Normalizing Your Data 1: Textual Normalization ###########
